@@ -1,3 +1,150 @@
+# QMP1-Primera-Iteracion
+
+## Diagrama de clases
+
+<p align="center"> 
+<img src="QMP1-Primera-Iteracion.png">
+</p>
+
+
+## Explicacion
+
+* La clase "Prenda" tiene estado, pero no tiene comportamiento relevante (por el momento). No se debe poder 
+  instanciar clases de "Prenda" directamente, se deben instanciar desde el "GeneradorDePrendas"
+
+
+* La clase "GeneradorDePrendas" sirve para configurar las instancias de "Prenda" y dejarlas con un estado aceptable 
+  para el sistema. Además esta clase permite evitar tener un constructor de "Prenda" con demasiados atributos.
+  
+
+* La clase "RepositorioTipoVentas" es un singleton que usamos para tratar de representar lo que sería una petición a
+  una base de datos, aunque no sabemos si sería correcto. La idea es que las listas que están en esta clase se puedan 
+  persistir y actualizar para poder identificar TIPOS de prendas válidos. Que a su vez nos permite identificar a que
+  categoria pertenece una prenda.
+
+
+## Pseudocodigo
+
+~~~
+
+class Atuendo{
+  List<Prenda> prendas
+  
+}
+
+class Prenda{
+  String tipo
+  CategoriaPrenda categoria
+  String materialConstruccion
+  int[] colorPrincipal = new int[3];
+  int[] colorSecundario = new int[3];
+  
+  
+  setTipo(String tipo){
+    TODO ❕
+  }
+  
+  setCategoria(CategoriaPrenda categoria){
+    TODO ❕
+  }
+  
+  setMaterialConstruccion(String materialConstruccion){
+    TODO ❕
+  }
+  
+  setColorPrincipal(int color1, int color2, int color3){
+    TODO ❕
+  }
+  
+  setColorSecundario(int color1, int color2, int color3){
+    TODO ❕
+  }
+}
+
+
+enum CategoriaPrenda{
+  PARTE-SUPERIOR, CALZADO, PARTE-INFERIOR, ACCESORIO
+}
+
+class GeneradorDePrendas{
+  Prenda prenda
+  
+  
+  crearNuevaPrenda(){
+    prenda = new Prenda();
+  }
+  
+  getPrenda(){
+  
+    if(!prenda.tipo || !prenda.materialConstruccion || !prenda.colorPrimario){
+      throw new exception("La prenda generada no es valida. Debe tener tipo de prenda, material de construccion y color primario")
+    }
+    
+    return prenda;
+  }
+  
+  
+  
+  
+  setTipoConCategoria(String tipoPrenda){
+    prenda.setTipo(tipoPrenda)
+    CategoriaPrenda categoria = RepositorioTipoPrendas.instance().buscarCategoria(tipo)
+    
+    prenda.setCategoria(categoria)
+  }
+  
+  setMaterialConstruccion(String materialConstruccion){
+    prenda.setMaterialConstruccion(materialConstruccion)
+  }
+  
+  setColorPrincipal(int color1, int color2, int color3){
+    prenda.setColorPrincipal(color1, color2, color3)
+  }
+  
+  setColorSecundario(int color1, int color2, int color3){
+    prenda.setColorSecundario(color1, color2, color3)
+  }
+  
+
+}
+
+
+class RepositorioTipoPrendas{
+
+  private static final RepositorioTipoPrendas INSTANCE = new RepositorioTipoPrendas();
+  
+  private RepositorioTipoPrendas(){}  //constructor
+  
+  public static RepositorioTipoPrendas instance(){
+    return INSTANCE
+  }
+  
+  List<String> partesSuperiores
+  List<String> partesInferiores
+  List<String> calzados
+  List<String> accesorios
+  
+  
+  buscarCategoria(String tipoPrenda){
+    
+    if(partesSuperiores.contains(tipoPrenda)) return CategoriaPrenda.PARTE-SUPERIOR
+    if(partesInferiores.contains(tipoPrenda)) return CategoriaPrenda.PARTE-INFERIOR
+    if(calzados.contains(tipoPrenda)) return CategoriaPrenda.CALZADO
+    if(accesorios.contains(tipoPrenda)) return CategoriaPrenda.ACCESORIO
+    else{
+    	throw new exception("El tipo de prenda ingresado no es valido")
+    }
+  }
+   
+}
+
+
+~~~
+
+
+---
+
+
 # java-base-project
 
 Esta es una plantilla de proyecto diseñada para: 
