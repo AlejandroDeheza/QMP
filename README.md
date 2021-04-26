@@ -1,29 +1,106 @@
 # QMP1-Primera-Iteracion
 
-## Diagrama de clases
+## Diagrama de clases ORIGINAL
 
 <p align="center"> 
 <img src="QMP1-Primera-Iteracion.png">
 </p>
 
-
 ## Explicacion
 
-* La clase "Prenda" tiene estado, pero no tiene comportamiento relevante (por el momento). No se debe poder 
+* La clase "Prenda" tiene estado, pero no tiene comportamiento relevante (por el momento). No se debe poder
   instanciar clases de "Prenda" directamente, se deben instanciar desde el "GeneradorDePrendas"
 
 
-* La clase "GeneradorDePrendas" sirve para configurar las instancias de "Prenda" y dejarlas con un estado aceptable 
+* La clase "GeneradorDePrendas" sirve para configurar las instancias de "Prenda" y dejarlas con un estado aceptable
   para el sistema. Además esta clase permite evitar tener un constructor de "Prenda" con demasiados atributos.
-  
+
 
 * La clase "RepositorioTipoVentas" es un singleton que usamos para tratar de representar lo que sería una petición a
-  una base de datos, aunque no sabemos si sería correcto. La idea es que las listas que están en esta clase se puedan 
+  una base de datos, aunque no sabemos si sería correcto. La idea es que las listas que están en esta clase se puedan
   persistir y actualizar para poder identificar TIPOS de prendas válidos. Que a su vez nos permite identificar a que
   categoria pertenece una prenda.
+  
+
+## Diagrama de clases REFACTORIZADO
+
+<p align="center"> 
+<img src="QMP1-Primera-Iteracion-refactorizado.png">
+</p>
+
+## Explicacion
+
+* El enum "TipoPrenda" representa los tipos de prendas. Deberia analizar el conjunto de tipos de prendas 
+  (si son muchos o pocos, estáticos o dinámicos, cada cuánto se van a actualizar, etc.) para determinar si 
+  usar un String, una clase o un enum. Segun lo visto en clase, son estáticos y son pocos tipos de prendas, 
+  entonces convendría utilizar un enum. Lo mismo pasa con el enum "MaterialConstruccion".
+  
+
+* Por defecto, cada tipo de prenda conoce a que categoria pertenece cuando se inicializa. De esta manera, la categoria 
+  siempre condice con el tipo de la prenda
 
 
-## Pseudocodigo
+
+## Pseudocodigo-REFACTORIZADO
+
+~~~
+
+class Prenda{
+  TipoPrenda tipo;
+  MaterialConstruccion materialConstruccion;
+  Color colorPrincipal;
+  Color colorSecundario;
+  
+  Prenda(TipoPrenda tipo, MaterialConstruccion materialConstruccion, Color colorPrincipal, Color colorSecundario){
+    validarPrenda(tipo, materialConstruccion, colorPrincipal);
+    this.tipo = tipo;
+    this.materialConstruccion = materialConstruccion;
+    this.colorPrincipal = colorPrincipal;
+    this.colorSecundario = colorSecundario;
+  }
+  
+  private validarPrenda(TipoPrenda tipo, MaterialConstruccion materialConstruccion, Color colorPrincipal){
+    if(tipo == null || materialConstruccion == null || colorPrincipal == null){
+        throw new PrendaInvalidaException("Falta ingresar TIPO, MATERIAL DE CONSTRUCCION o COLOR PRINCIPAL de la prenda");
+    }
+  }
+  
+}
+
+enum TipoPrenda{
+    REMERA(CategoriaPrenda.PARTE_SUPERIOR), BUZO(CategoriaPrenda.PARTE_SUPERIOR), CAMPERA(CategoriaPrenda.PARTE_SUPERIOR), 
+    ZAPATILLAS(CategoriaPrenda.CALZADO), ZAPATOS(CategoriaPrenda.CALZADO), BOTAS(CategoriaPrenda.CALZADO),
+     MEDIAS(CategoriaPrenda.PARTE_INFERIOR), BERMUDA(CategoriaPrenda.PARTE_INFERIOR), PANTALON(CategoriaPrenda.PARTE_INFERIOR), 
+     LENTES(CategoriaPrenda.ACCESORIO)
+    
+    private CategoriaPrenda categoria;
+    
+    private TipoPrenda(CategoriaPrenda categoria){
+        this.categoria = categoria;
+    }
+    
+    public CategoriaPrenda getCategoria(){
+        return this.categoria;
+    }
+}
+
+enum CategoriaPrenda(){
+    PARTE_SUPERIOR, PARTE_INFERIOR, CALZADO, ACCESORIO
+}
+
+enum MaterialConstruccion{
+    ALGODON, JEAN, CUERO, POLIESTER, LANA
+}
+
+class Color{
+    int rojo;
+    int verde;
+    int azul;
+}
+
+~~~
+
+## Pseudocodigo ORIGINAL
 
 ~~~
 
@@ -145,17 +222,6 @@ class RepositorioTipoPrendas{
 ---
 
 
-# java-base-project
-
-Esta es una plantilla de proyecto diseñada para: 
-
-* Java 8. :warning: Si bien el proyecto no lo limita explícitamente, el comando `mvn verify` no funcionará con versiones mas modernas de Java. 
-* JUnit 5. :warning: La versión 5 de JUnit es la más nueva del framework y presenta algunas diferencias respecto a la versión "clásica" (JUnit 4). Para mayores detalles, ver: 
-  *  [Apunte de herramientas](https://docs.google.com/document/d/1VYBey56M0UU6C0689hAClAvF9ILE6E7nKIuOqrRJnWQ/edit#heading=h.dnwhvummp994)
-  *  [Entrada de Blog (en inglés)](https://www.baeldung.com/junit-5-migration) 
-  *  [Entrada de Blog (en español)](https://www.paradigmadigital.com/dev/nos-espera-junit-5/)
-* Maven 3.3 o superior
-
 # Ejecutar tests
 
 ```
@@ -184,13 +250,3 @@ explicada en el punto anterior. Se recomienda hacerlo de la siguiente forma:
 mvn clean verify && git tag entrega-final && git push origin HEAD --tags
 ```
 
-# Configuración del IDE (IntelliJ)
-
- 1. Tabular con dos espacios: ![Screenshot_2021-04-09_18-23-26](https://user-images.githubusercontent.com/677436/114242543-73e1fe00-9961-11eb-9a61-7e34be9fb8de.png)
- 2. Instalar y configurar Checkstyle:
-    1. Instalar el plugin https://plugins.jetbrains.com/plugin/1065-checkstyle-idea:
-    2. Configurarlo activando los Checks de Google: ![Screenshot_2021-04-09_18-16-13](https://user-images.githubusercontent.com/677436/114242548-75132b00-9961-11eb-972e-28e6e1412979.png)
- 3. Usar fin de linea unix
-    1. En **Settings/Preferences**, ir a a **Editor | Code Style**.
-    2. En la lista **Line separator**, seleccionar `Unix and OS X (\n)`.
- ![Screenshot 2021-04-10 03-49-00](https://user-images.githubusercontent.com/11875266/114260872-c6490c00-99ad-11eb-838f-022acc1903f4.png)
