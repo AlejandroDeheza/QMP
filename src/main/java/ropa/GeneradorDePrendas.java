@@ -4,8 +4,8 @@ import excepciones.PrendaInvalidaException;
 
 public class GeneradorDePrendas {
 
-  TipoPrenda tipo;
-  MaterialConstruccion materialConstruccion;
+  private TipoPrenda tipo;
+  private MaterialConstruccion materialConstruccion;
 
   public GeneradorDePrendas(TipoPrenda tipo){
     this.tipo = tipo;
