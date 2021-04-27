@@ -1,5 +1,22 @@
 # QMP-Segunda-Iteracion
 
+## Aclaracion
+
+No estoy cumpliendo con el siguiente requerimiento:
+
+~~~
+Como usuarie de QuéMePongo, quiero crear una prenda especificando en segundo lugar los aspectos relacionados a su 
+material (colores, material, trama, etc) para evitar elegir materiales inconsistentes con el tipo de prenda.
+~~~
+
+Ya que me surgieron algunas dudas:
+
+* ¿A qué se refiere con "etc" en el requerimiento? ¿Qué otros aspectos relacionados con el material hay?
+
+* ¿Qué materiales serian inconsistentes segun el tipo de prenda? ¿En qué me debería basar para saberlo?
+
+
+
 ## Diagrama de clases - REQUERIMIENTOS DE ESTA ITERACION
 
 <p align="center"> 
@@ -82,9 +99,8 @@ class GeneradorDePrendas {
 
   private void validarMaterialPrenda(MaterialConstruccion materialConstruccion) {
     //TODO
-    //que materiales serian inconsistentes segun el tipo de prenda?
-    //"Como usuarie de QuéMePongo, quiero crear una prenda especificando en segundo lugar los aspectos relacionados 
-    //a su material (colores, material, trama, etc) para evitar elegir materiales inconsistentes con el tipo de prenda."
+    "Como usuarie de QuéMePongo, quiero crear una prenda especificando en segundo lugar los aspectos relacionados 
+    a su material (colores, material, trama, etc) para evitar elegir materiales inconsistentes con el tipo de prenda."
     Para preguntar: :warning:
     a que se refiere con etc en el requerimiento? aspectos relacionados a su material? cuales mas?
     despues dice "para evitar elegir materiales inconsistentes con el tipo de prenda."

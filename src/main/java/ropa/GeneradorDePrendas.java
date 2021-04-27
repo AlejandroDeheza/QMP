@@ -33,8 +33,7 @@ public class GeneradorDePrendas {
   }
 
   private boolean materialConstruccionNoCondiceConElTipo(MaterialConstruccion materialConstruccion) {
-    return false;
-    //throw new Error("METHOD materialConstruccionNoCondiceConElTipo() NOT IMPLEMENTED. class GeneradorDePrendas");
+    throw new Error("METHOD materialConstruccionNoCondiceConElTipo() NOT IMPLEMENTED. class GeneradorDePrendas");
     //TODO
     //que materiales serian inconsistentes segun el tipo de prenda?
   }
