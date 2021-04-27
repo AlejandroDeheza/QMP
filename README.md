@@ -16,8 +16,8 @@
 ~~~
 
 class Material{
-    TipoMaterial tipoMaterial; // QMP1
-    Trama trama = Trama.LISA; // por defecto
+    TipoMaterial tipoMaterial;
+    Trama trama = Trama.LISA;
 }
 
 enum Trama{

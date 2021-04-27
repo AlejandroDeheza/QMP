@@ -12,4 +12,18 @@ public class Color {
     this.verde = verde;
     this.azul = azul;
   }
+
+
+  //GETTERS
+  public Integer getRojo() {
+    return rojo;
+  }
+
+  public Integer getVerde() {
+    return verde;
+  }
+
+  public Integer getAzul() {
+    return azul;
+  }
 }

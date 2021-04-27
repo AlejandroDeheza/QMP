@@ -1,61 +1,45 @@
 package ropa;
 
-import excepciones.FaltaTipoDePrendaException;
 import excepciones.PrendaInvalidaException;
 
 public class GeneradorDePrendas {
 
-  private Prenda prenda = new Prenda();
+  TipoPrenda tipo;
+  MaterialConstruccion materialConstruccion;
 
-
-
-  public void configurarNuevaPrenda() {
-    prenda = new Prenda();
+  public GeneradorDePrendas(TipoPrenda tipo){
+    this.tipo = tipo;
   }
 
-
-
-  public void setTipoConCategoria(String tipoPrenda) {
-    CategoriaPrenda categoria = RepositorioTipoPrendas.instance().buscarCategoria(tipoPrenda);
-    prenda.setTipo(tipoPrenda);
-    prenda.setCategoria(categoria);
+  public void setMaterialPrenda(MaterialConstruccion materialConstruccion){
+    this.validarMaterialPrenda(materialConstruccion);
+    this.materialConstruccion = materialConstruccion;
   }
 
-  public void setMaterialConstruccion(MaterialConstruccion materialConstruccion) {
-    prenda.setMaterialConstruccion(materialConstruccion);
+  private void validarMaterialPrenda(MaterialConstruccion materialConstruccion) {
+    //TODO
+    //que materiales serian inconsistetes segun su tipo?
   }
 
-  public void setColorPrincipal(Color colorPrincipal) {
-    prenda.setColorPrincipal(colorPrincipal);
+  public Prenda generarPrenda(){
+    this.validarPrenda();
+    return new Prenda(this.tipo, this.materialConstruccion);
   }
 
-  public void setColorSecundario(Color colorSecundario) {
-    prenda.setColorSecundario(colorSecundario);
-  }
-
-
-
-
-  public CategoriaPrenda identificarCategoria() {
-
-    if (this.prenda.getTipo() == null) {
-      throw new FaltaTipoDePrendaException("Para Identificar la CATEGORIA de tu prenda primero es necesario ingresar su TIPO");
-    }
-    return prenda.getCategoria();
-  }
-
-  public Prenda getPrendaValida() {
+  private void validarPrenda() {
 
     if (esPrendaInvalida()) {
-      throw new PrendaInvalidaException("Falta tipo de prenda, material de construccion y/o color primario");
-    } else {
-      return prenda;
+      throw new PrendaInvalidaException("Falta ingresar TIPO, MATERIAL DE CONSTRUCCION y/o COLOR PRINCIPAL de la prenda");
     }
   }
 
   private Boolean esPrendaInvalida(){
-    return this.prenda.getTipo() == null
-        || this.prenda.getMaterialConstruccion() == null
-        || this.prenda.getColorPrincipal() == null;
+    return this.tipo == null
+        || this.materialConstruccion.getTipoMaterial() == null
+        || this.materialConstruccion.getColorPrincipal() == null;
+  }
+
+  public CategoriaPrenda identificarCategoria() {
+    return tipo.getCategoria();
   }
 }
