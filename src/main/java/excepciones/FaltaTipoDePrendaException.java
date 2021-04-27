@@ -1,7 +1,7 @@
 package excepciones;
 
 public class FaltaTipoDePrendaException extends RuntimeException {
-  public FaltaTipoDePrendaException(String s) {
-    super(s);
+  public FaltaTipoDePrendaException(String causa) {
+    super("" + causa);
   }
 }

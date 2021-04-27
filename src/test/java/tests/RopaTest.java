@@ -62,15 +62,15 @@ public class RopaTest {
   public void siCreoUnaPrendaValidaNoPasaNada() {
     GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas();
     generadorDePrendas.setTipoConCategoria("remera");
-    generadorDePrendas.setMaterialConstruccion("algodon");
-    generadorDePrendas.setColorPrincipal(1, 2, 3);
+    generadorDePrendas.setMaterialConstruccion(MaterialConstruccion.ALGODON);
+    generadorDePrendas.setColorPrincipal(new Color(1, 2, 3));
     Assertions.assertDoesNotThrow(generadorDePrendas::getPrendaValida);
   }
 
   @Test
   public void siCreoUnaPrendaInvalidaDaPrendaInvalidaException() {
     GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas();
-    generadorDePrendas.setColorSecundario(1, 2, 3);
+    generadorDePrendas.setColorSecundario(new Color(1, 2, 3));
     Assertions.assertThrows(PrendaInvalidaException.class, generadorDePrendas::getPrendaValida);
   }
 

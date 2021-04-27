@@ -1,7 +1,7 @@
 package excepciones;
 
 public class TipoDePrendaInvalidaException extends RuntimeException {
-  public TipoDePrendaInvalidaException(String s) {
-    super(s);
+  public TipoDePrendaInvalidaException(String causa) {
+    super("" + causa);
   }
 }
