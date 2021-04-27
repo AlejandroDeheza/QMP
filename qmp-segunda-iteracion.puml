@@ -75,5 +75,6 @@ ropa.Color <-- ropa.MaterialConstruccion: colorPrincipal
 ropa.Color <-- ropa.MaterialConstruccion: colorSecundario
 ropa.CategoriaPrenda <-- ropa.TipoPrenda: categoria
 ropa.GeneradorDePrendas <.. ropa.Institucion
+ropa.Prenda <.. ropa.GeneradorDePrendas
 
 @enduml
