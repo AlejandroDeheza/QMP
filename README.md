@@ -1,59 +1,86 @@
 # QMP-Segunda-Iteracion
 
+## Diagrama de clases RESUMIDO
+
+<p align="center"> 
+<img src="QMP-Segunda-Iteracion-resumido.png">
+</p>
+
+## Explicacion
+
+*
+
 ## Diagrama de clases
 
 <p align="center"> 
 <img src="QMP-Segunda-Iteracion.png">
 </p>
 
-## Explicacion
-
-* 
-
 
 ## Pseudocodigo
 
 ~~~
 
-class Material{
-    TipoMaterial tipoMaterial;
-    Trama trama = Trama.LISA;
+class MaterialConstruccion {
+
+  private TipoMaterial tipoMaterial;
+  private Trama trama = Trama.LISA;
+  private Color colorPrincipal;
+  private Color colorSecundario;
+
+  MaterialConstruccion(TipoMaterial tipoMaterial, Trama trama, Color colorPrincipal, Color colorSecundario){
+    this.tipoMaterial = tipoMaterial;
+    if(trama != null){
+      this.trama = trama;
+    }
+    this.colorPrincipal = colorPrincipal;
+    this.colorSecundario = colorSecundario;
+  }
 }
 
 enum Trama{
     LISA, RAYADA, CON_LUNARES, A_CUADROS, ESTAMPADO
 }
 
-//"Como usuarie de QuéMePongo, quiero crear una prenda especificando primero de qué tipo es."
-agrego tipoPrenda en el constructor del GeneradorDePrendas
+class GeneradorDePrendas {
 
-//"Como usuarie de QuéMePongo, quiero crear una prenda especificando en segundo lugar los aspectos relacionados 
-//a su material (colores, material, trama, etc) para evitar elegir materiales inconsistentes con el tipo de prenda."
-algo asi:
-generadorDePendas.describirPrenda(new Color(num, num, num), null, new Material(TipoMaterial.ALGODON, Trama.LISA), etc?);
-Para preguntar: :warning:
-a que se refiere con etc en el requerimiento? aspectos relacionados a su material? cuales mas?
-despues dice "para evitar elegir materiales inconsistentes con el tipo de prenda."
-que materiales serian inconsistetes segun su tipo?
+  TipoPrenda tipo;
+  MaterialConstruccion materialConstruccion;
+
+  public GeneradorDePrendas(TipoPrenda tipo){
+    this.tipo = tipo;
+  }
+
+  public void setMaterialPrenda(MaterialConstruccion materialConstruccion){
+    this.validarMaterialPrenda(materialConstruccion);
+    this.materialConstruccion = materialConstruccion;
+  }
+
+  private void validarMaterialPrenda(MaterialConstruccion materialConstruccion) {
+    //TODO
+    //que materiales serian inconsistetes segun su tipo?
+    //"Como usuarie de QuéMePongo, quiero crear una prenda especificando en segundo lugar los aspectos relacionados 
+    //a su material (colores, material, trama, etc) para evitar elegir materiales inconsistentes con el tipo de prenda."
+    Para preguntar: :warning:
+    a que se refiere con etc en el requerimiento? aspectos relacionados a su material? cuales mas?
+    despues dice "para evitar elegir materiales inconsistentes con el tipo de prenda."
+    que materiales serian inconsistetes segun su tipo?
+  }
+
+  public Prenda generarPrenda(){
+    this.validarPrenda();
+    return new Prenda(this.tipo, this.materialConstruccion);
+  }
+}
 
 
-
-//"Como usuarie de QuéMePongo, quiero guardar un borrador de la la última prenda que empecé a cargar para continuar después."
-crear una clase BorradorPrenda y usar eso en el Builder. asi si devuelve el Borrador no se puede usar como Prenda 
-porque no le dan los tipos. Y si el Borrador ya es valido, generar una Prenda
-O MEJOR
-guardar el "borrador" adentro del GeneradorDePrendas
-asi guarda lo ingresado y solo le dejamos devolver Prendas valida
-Asi cumple ultimo requerimiento
-
-
-
+/////////////
 
 class Usuario{
     
-    List<Sugerencia> sugerencias;
+    List<Uniforme> sugerencias;
     
-    public void agregarSugerencia(Sugerencia sugerencia){
+    public void agregarSugerencia(Uniforme sugerencia){
         sugerencias.add(sugerencia);
     }
 }
@@ -64,10 +91,38 @@ class Uniforme{
     Prenda calzado;
 }
 
-//para ultimo requerimiento
-hacer un factory para
-colegioSanJuan
-institutoJohnson
+abstract class Institucion {
+
+  abstract Uniforme crearUniforme()
+
+  Prenda generarPrenda(TipoPrenda tipo, TipoMaterial material, Trama trama, Color colorPrimario, Color colorSecundario){
+    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas(tipo);
+    ...
+    return generadorDePrendas.generarPrenda();
+  }
+}
+
+class ColegioSanJuan extends Institucion{
+
+  public Uniforme crearUniforme() {
+    Prenda prendaSuperior = this.generarPrenda(...)
+    Prenda prendaInferior = this.generarPrenda(...)
+    Prenda calzado = this.generarPrenda(...)
+    
+    return new Uniforme(prendaSuperior, prendaInferior, calzado)
+  }
+}
+
+class InstitutoJohnson extends Institucion{
+
+  public Uniforme crearUniforme() {
+    Prenda prendaSuperior = this.generarPrenda(...)
+    Prenda prendaInferior = this.generarPrenda(...)
+    Prenda calzado = this.generarPrenda(...)
+
+    return new Uniforme(prendaSuperior, prendaInferior, calzado)
+  }
+}
 
 
 ~~~
