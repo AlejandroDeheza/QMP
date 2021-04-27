@@ -2,10 +2,8 @@
 
 ## CORRECCION
 
+* [Enlace](https://github.com/mnigliazzo/qmp-grupo10/issues/3) de la correccion
 
-```
-[Enlace](https://github.com/mnigliazzo/qmp-grupo10/issues/3) de la correccion
-```
 
 ## Diagrama de clases ORIGINAL
 
