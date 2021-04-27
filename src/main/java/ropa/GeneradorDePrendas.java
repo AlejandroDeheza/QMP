@@ -21,16 +21,16 @@ public class GeneradorDePrendas {
     prenda.setCategoria(categoria);
   }
 
-  public void setMaterialConstruccion(String materialConstruccion) {
+  public void setMaterialConstruccion(MaterialConstruccion materialConstruccion) {
     prenda.setMaterialConstruccion(materialConstruccion);
   }
 
-  public void setColorPrincipal(int color1, int color2, int color3) {
-    prenda.setColorPrincipal(color1, color2, color3);
+  public void setColorPrincipal(Color colorPrincipal) {
+    prenda.setColorPrincipal(colorPrincipal);
   }
 
-  public void setColorSecundario(int color1, int color2, int color3) {
-    prenda.setColorSecundario(color1, color2, color3);
+  public void setColorSecundario(Color colorSecundario) {
+    prenda.setColorSecundario(colorSecundario);
   }
 
 
@@ -47,7 +47,7 @@ public class GeneradorDePrendas {
   public Prenda getPrendaValida() {
 
     if (esPrendaInvalida()) {
-      throw new PrendaInvalidaException("La prenda generada no es valida. Debe tener tipo de prenda, material de construccion y color primario");
+      throw new PrendaInvalidaException("Falta tipo de prenda, material de construccion y/o color primario");
     } else {
       return prenda;
     }
