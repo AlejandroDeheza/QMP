@@ -1,228 +1,76 @@
-# QMP1-Primera-Iteracion
+# QMP-Segunda-Iteracion
 
-## CORRECCION
-
-* [Enlace](https://github.com/mnigliazzo/qmp-grupo10/issues/3) de la correccion
-
-
-## Diagrama de clases ORIGINAL
+## Diagrama de clases
 
 <p align="center"> 
-<img src="QMP1-Primera-Iteracion.png">
+<img src="QMP-Segunda-Iteracion.png">
 </p>
 
 ## Explicacion
 
-* La clase "Prenda" tiene estado, pero no tiene comportamiento relevante (por el momento). No se debe poder
-  instanciar clases de "Prenda" directamente, se deben instanciar desde el "GeneradorDePrendas"
+* 
 
 
-* La clase "GeneradorDePrendas" sirve para configurar las instancias de "Prenda" y dejarlas con un estado aceptable
-  para el sistema. Además esta clase permite evitar tener un constructor de "Prenda" con demasiados atributos.
-
-
-* La clase "RepositorioTipoVentas" es un singleton que usamos para tratar de representar lo que sería una petición a
-  una base de datos, aunque no sabemos si sería correcto. La idea es que las listas que están en esta clase se puedan
-  persistir y actualizar para poder identificar TIPOS de prendas válidos. Que a su vez nos permite identificar a que
-  categoria pertenece una prenda.
-  
-
-## Diagrama de clases REFACTORIZADO
-
-<p align="center"> 
-<img src="QMP1-Primera-Iteracion-refactorizado.png">
-</p>
-
-## Explicacion
-
-* El enum "TipoPrenda" representa los tipos de prendas. Deberia analizar el conjunto de tipos de prendas 
-  (si son muchos o pocos, estáticos o dinámicos, cada cuánto se van a actualizar, etc.) para determinar si 
-  usar un String, una clase o un enum. Segun lo visto en clase, son estáticos y son pocos tipos de prendas, 
-  entonces convendría utilizar un enum. Lo mismo pasa con el enum "MaterialConstruccion".
-  
-
-* Por defecto, cada tipo de prenda conoce a que categoria pertenece cuando se inicializa. De esta manera, la categoria 
-  siempre condice con el tipo de la prenda
-
-
-
-## Pseudocodigo-REFACTORIZADO
+## Pseudocodigo
 
 ~~~
 
-class Prenda{
-  TipoPrenda tipo;
-  MaterialConstruccion materialConstruccion;
-  Color colorPrincipal;
-  Color colorSecundario;
-  
-  Prenda(TipoPrenda tipo, MaterialConstruccion materialConstruccion, Color colorPrincipal, Color colorSecundario){
-    validarPrenda(tipo, materialConstruccion, colorPrincipal);
-    this.tipo = tipo;
-    this.materialConstruccion = materialConstruccion;
-    this.colorPrincipal = colorPrincipal;
-    this.colorSecundario = colorSecundario;
-  }
-  
-  private validarPrenda(TipoPrenda tipo, MaterialConstruccion materialConstruccion, Color colorPrincipal){
-    if(tipo == null || materialConstruccion == null || colorPrincipal == null){
-        throw new PrendaInvalidaException("Falta ingresar TIPO, MATERIAL DE CONSTRUCCION o COLOR PRINCIPAL de la prenda");
+class Material{
+    TipoMaterial tipoMaterial; // QMP1
+    Trama trama = Trama.LISA; // por defecto
+}
+
+enum Trama{
+    LISA, RAYADA, CON_LUNARES, A_CUADROS, ESTAMPADO
+}
+
+//"Como usuarie de QuéMePongo, quiero crear una prenda especificando primero de qué tipo es."
+agrego tipoPrenda en el constructor del GeneradorDePrendas
+
+//"Como usuarie de QuéMePongo, quiero crear una prenda especificando en segundo lugar los aspectos relacionados 
+//a su material (colores, material, trama, etc) para evitar elegir materiales inconsistentes con el tipo de prenda."
+algo asi:
+generadorDePendas.describirPrenda(new Color(num, num, num), null, new Material(TipoMaterial.ALGODON, Trama.LISA), etc?);
+Para preguntar: :warning:
+a que se refiere con etc en el requerimiento? aspectos relacionados a su material? cuales mas?
+despues dice "para evitar elegir materiales inconsistentes con el tipo de prenda."
+que materiales serian inconsistetes segun su tipo?
+
+
+
+//"Como usuarie de QuéMePongo, quiero guardar un borrador de la la última prenda que empecé a cargar para continuar después."
+crear una clase BorradorPrenda y usar eso en el Builder. asi si devuelve el Borrador no se puede usar como Prenda 
+porque no le dan los tipos. Y si el Borrador ya es valido, generar una Prenda
+O MEJOR
+guardar el "borrador" adentro del GeneradorDePrendas
+asi guarda lo ingresado y solo le dejamos devolver Prendas valida
+Asi cumple ultimo requerimiento
+
+
+
+
+class Usuario{
+    
+    List<Sugerencia> sugerencias;
+    
+    public void agregarSugerencia(Sugerencia sugerencia){
+        sugerencias.add(sugerencia);
     }
-  }
-  
 }
 
-enum TipoPrenda{
-    REMERA(CategoriaPrenda.PARTE_SUPERIOR), BUZO(CategoriaPrenda.PARTE_SUPERIOR), CAMPERA(CategoriaPrenda.PARTE_SUPERIOR), 
-    ZAPATILLAS(CategoriaPrenda.CALZADO), ZAPATOS(CategoriaPrenda.CALZADO), BOTAS(CategoriaPrenda.CALZADO),
-     MEDIAS(CategoriaPrenda.PARTE_INFERIOR), BERMUDA(CategoriaPrenda.PARTE_INFERIOR), PANTALON(CategoriaPrenda.PARTE_INFERIOR), 
-     LENTES(CategoriaPrenda.ACCESORIO)
-    
-    private CategoriaPrenda categoria;
-    
-    private TipoPrenda(CategoriaPrenda categoria){
-        this.categoria = categoria;
-    }
-    
-    public CategoriaPrenda getCategoria(){
-        return this.categoria;
-    }
+class Uniforme{
+    Prenda prendaSuperior;
+    Prenda prendaInferior;
+    Prenda calzado;
 }
 
-enum CategoriaPrenda(){
-    PARTE_SUPERIOR, PARTE_INFERIOR, CALZADO, ACCESORIO
-}
-
-enum MaterialConstruccion{
-    ALGODON, JEAN, CUERO, POLIESTER, LANA
-}
-
-class Color{
-    int rojo;
-    int verde;
-    int azul;
-}
-
-~~~
-
-## Pseudocodigo ORIGINAL
-
-~~~
-
-class Atuendo{
-  List<Prenda> prendas
-  
-}
-
-class Prenda{
-  String tipo
-  CategoriaPrenda categoria
-  String materialConstruccion
-  int[] colorPrincipal = new int[3];
-  int[] colorSecundario = new int[3];
-  
-  
-  setTipo(String tipo){
-    TODO ❕
-  }
-  
-  setCategoria(CategoriaPrenda categoria){
-    TODO ❕
-  }
-  
-  setMaterialConstruccion(String materialConstruccion){
-    TODO ❕
-  }
-  
-  setColorPrincipal(int color1, int color2, int color3){
-    TODO ❕
-  }
-  
-  setColorSecundario(int color1, int color2, int color3){
-    TODO ❕
-  }
-}
-
-
-enum CategoriaPrenda{
-  PARTE-SUPERIOR, CALZADO, PARTE-INFERIOR, ACCESORIO
-}
-
-class GeneradorDePrendas{
-  Prenda prenda
-  
-  
-  crearNuevaPrenda(){
-    prenda = new Prenda();
-  }
-  
-  getPrenda(){
-  
-    if(!prenda.tipo || !prenda.materialConstruccion || !prenda.colorPrimario){
-      throw new exception("La prenda generada no es valida. Debe tener tipo de prenda, material de construccion y color primario")
-    }
-    
-    return prenda;
-  }
-  
-  
-  
-  
-  setTipoConCategoria(String tipoPrenda){
-    prenda.setTipo(tipoPrenda)
-    CategoriaPrenda categoria = RepositorioTipoPrendas.instance().buscarCategoria(tipo)
-    
-    prenda.setCategoria(categoria)
-  }
-  
-  setMaterialConstruccion(String materialConstruccion){
-    prenda.setMaterialConstruccion(materialConstruccion)
-  }
-  
-  setColorPrincipal(int color1, int color2, int color3){
-    prenda.setColorPrincipal(color1, color2, color3)
-  }
-  
-  setColorSecundario(int color1, int color2, int color3){
-    prenda.setColorSecundario(color1, color2, color3)
-  }
-  
-
-}
-
-
-class RepositorioTipoPrendas{
-
-  private static final RepositorioTipoPrendas INSTANCE = new RepositorioTipoPrendas();
-  
-  private RepositorioTipoPrendas(){}  //constructor
-  
-  public static RepositorioTipoPrendas instance(){
-    return INSTANCE
-  }
-  
-  List<String> partesSuperiores
-  List<String> partesInferiores
-  List<String> calzados
-  List<String> accesorios
-  
-  
-  buscarCategoria(String tipoPrenda){
-    
-    if(partesSuperiores.contains(tipoPrenda)) return CategoriaPrenda.PARTE-SUPERIOR
-    if(partesInferiores.contains(tipoPrenda)) return CategoriaPrenda.PARTE-INFERIOR
-    if(calzados.contains(tipoPrenda)) return CategoriaPrenda.CALZADO
-    if(accesorios.contains(tipoPrenda)) return CategoriaPrenda.ACCESORIO
-    else{
-    	throw new exception("El tipo de prenda ingresado no es valido")
-    }
-  }
-   
-}
+//para ultimo requerimiento
+hacer un factory para
+colegioSanJuan
+institutoJohnson
 
 
 ~~~
-
 
 ---
 
