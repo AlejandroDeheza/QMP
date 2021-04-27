@@ -1,6 +1,6 @@
 # QMP-Segunda-Iteracion
 
-## Diagrama de clases RESUMIDO
+## Diagrama de clases - REQUERIMIENTOS DE ESTA ITERACION
 
 <p align="center"> 
 <img src="QMP-Segunda-Iteracion-resumido.png">
@@ -8,9 +8,30 @@
 
 ## Explicacion
 
-*
+* Se agregó la abstraccion "MaterialConstruccion" separándola de la "Prenda" y se dejó una referencia a ella desde "Prenda". 
+  Esto permite tener 2 abstracciones más cohesivas a costa de tenerlas un poco acopladas.
+  
 
-## Diagrama de clases
+* La clase "GeneradorDePrendas" estaría representando un builder para configurar "Prenda". Esto permite utilizar una 
+  instancia de "GeneradorDePrendas" como un borrador para despues continuar configurando una prenda. 
+  Antes de generar una "Prenda", el "GeneradorDePrendas" se encarga de validar lo ingresado.
+
+
+* Se agregó la abstraccion "Uniforme" con 3 atributos tipo "Prenda".
+
+
+* Se agregó la abstraccion "Usuario" con una lista "Sugerencias" de tipo "Uniforme" y un metodo para agregar Uniformes
+  para tratarlos como sugerencias recibidas.
+
+
+* El metodo "crearUniforme()" de la clase "Institucion" estaría representando un factory method. 
+  El cual se implementa en las subclases "ColegioSanJuan" e "InstitutoJohnson". Esto permite agregar 
+  nuevas Instituciones para configurar diferentes Uniformes a futuro. Esto permite que el sistema sea más extensible. 
+  Además de que, al menos en este caso, permite no repetir logica al tener los metodos comunes en la superclase abstracta.
+  El metodo en comun es "generarPrenda(...)".
+  
+
+## Diagrama de clases - SOLUCION COMPLETA
 
 <p align="center"> 
 <img src="QMP-Segunda-Iteracion.png">
@@ -58,13 +79,13 @@ class GeneradorDePrendas {
 
   private void validarMaterialPrenda(MaterialConstruccion materialConstruccion) {
     //TODO
-    //que materiales serian inconsistetes segun su tipo?
+    //que materiales serian inconsistentes segun el tipo de prenda?
     //"Como usuarie de QuéMePongo, quiero crear una prenda especificando en segundo lugar los aspectos relacionados 
     //a su material (colores, material, trama, etc) para evitar elegir materiales inconsistentes con el tipo de prenda."
     Para preguntar: :warning:
     a que se refiere con etc en el requerimiento? aspectos relacionados a su material? cuales mas?
     despues dice "para evitar elegir materiales inconsistentes con el tipo de prenda."
-    que materiales serian inconsistetes segun su tipo?
+    que materiales serian inconsistentes segun el tipo de prenda?
   }
 
   public Prenda generarPrenda(){

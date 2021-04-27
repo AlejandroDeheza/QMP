@@ -18,7 +18,7 @@ public class GeneradorDePrendas {
 
   private void validarMaterialPrenda(MaterialConstruccion materialConstruccion) {
     //TODO
-    //que materiales serian inconsistetes segun su tipo?
+    //que materiales serian inconsistentes segun el tipo de prenda?
   }
 
   public Prenda generarPrenda(){
