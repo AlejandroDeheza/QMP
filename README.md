@@ -69,6 +69,9 @@ class GeneradorDePrendas {
   MaterialConstruccion materialConstruccion;
 
   public GeneradorDePrendas(TipoPrenda tipo){
+    if(tipo == null){
+      throw new PrendaInvalidaException("Falta ingresar TIPO de la prenda");
+    }
     this.tipo = tipo;
   }
 

@@ -8,6 +8,9 @@ public class GeneradorDePrendas {
   private MaterialConstruccion materialConstruccion;
 
   public GeneradorDePrendas(TipoPrenda tipo){
+    if(tipo == null){
+      throw new PrendaInvalidaException("Falta ingresar TIPO de la prenda");
+    }
     this.tipo = tipo;
   }
 
@@ -17,26 +20,27 @@ public class GeneradorDePrendas {
   }
 
   private void validarMaterialPrenda(MaterialConstruccion materialConstruccion) {
+    if(materialConstruccion.getTipoMaterial() == null){
+      throw new PrendaInvalidaException("Falta ingresar el TIPO DE MATERIAL DE CONSTRUCCION de la prenda");
+    }
+    if(materialConstruccion.getColorPrincipal() == null){
+      throw new PrendaInvalidaException("Falta ingresar COLOR PRINCIPAL de la prenda");
+    }
+    if(materialConstruccionNoCondiceConElTipo(materialConstruccion)){
+      throw new PrendaInvalidaException(
+          "El TIPO DE MATERIAL DE CONSTRUCCION ingresado no condice con el TIPO DE PRENDA ingresado anteriormente");
+    }
+  }
+
+  private boolean materialConstruccionNoCondiceConElTipo(MaterialConstruccion materialConstruccion) {
+    return false;
+    //throw new Error("METHOD materialConstruccionNoCondiceConElTipo() NOT IMPLEMENTED. class GeneradorDePrendas");
     //TODO
     //que materiales serian inconsistentes segun el tipo de prenda?
   }
 
   public Prenda generarPrenda(){
-    this.validarPrenda();
     return new Prenda(this.tipo, this.materialConstruccion);
-  }
-
-  private void validarPrenda() {
-
-    if (esPrendaInvalida()) {
-      throw new PrendaInvalidaException("Falta ingresar TIPO, MATERIAL DE CONSTRUCCION y/o COLOR PRINCIPAL de la prenda");
-    }
-  }
-
-  private Boolean esPrendaInvalida(){
-    return this.tipo == null
-        || this.materialConstruccion.getTipoMaterial() == null
-        || this.materialConstruccion.getColorPrincipal() == null;
   }
 
   public CategoriaPrenda identificarCategoria() {
