@@ -3,7 +3,7 @@
 ## Diagrama de clases - REQUERIMIENTOS DE ESTA ITERACION
 
 <p align="center"> 
-<img src="QMP-Segunda-Iteracion-resumido.png">
+<img src="diagramas/QMP-Segunda-Iteracion-resumido.png">
 </p>
 
 ## Explicacion
@@ -34,7 +34,7 @@
 ## Diagrama de clases - SOLUCION COMPLETA
 
 <p align="center"> 
-<img src="QMP-Segunda-Iteracion.png">
+<img src="diagramas/QMP-Segunda-Iteracion.png">
 </p>
 
 
