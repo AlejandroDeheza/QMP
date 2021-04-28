@@ -14,9 +14,17 @@ public class GeneradorDePrendas {
     this.tipo = tipo;
   }
 
+  public CategoriaPrenda identificarCategoria() {
+    return tipo.getCategoria();
+  }
+
   public void setMaterialPrenda(MaterialConstruccion materialConstruccion){
     this.validarMaterialPrenda(materialConstruccion);
     this.materialConstruccion = materialConstruccion;
+  }
+
+  public Prenda generarPrenda(){
+    return new Prenda(this.tipo, this.materialConstruccion);
   }
 
   private void validarMaterialPrenda(MaterialConstruccion materialConstruccion) {
@@ -26,23 +34,28 @@ public class GeneradorDePrendas {
     if(materialConstruccion.getColorPrincipal() == null){
       throw new PrendaInvalidaException("Falta ingresar COLOR PRINCIPAL de la prenda");
     }
-    if(materialConstruccionNoCondiceConElTipo(materialConstruccion)){
+    if(tipoMaterialNoCondiceConTipoPrenda(materialConstruccion.getTipoMaterial())){
       throw new PrendaInvalidaException(
           "El TIPO DE MATERIAL DE CONSTRUCCION ingresado no condice con el TIPO DE PRENDA ingresado anteriormente");
     }
   }
 
-  private boolean materialConstruccionNoCondiceConElTipo(MaterialConstruccion materialConstruccion) {
-    throw new Error("METHOD materialConstruccionNoCondiceConElTipo() NOT IMPLEMENTED. class GeneradorDePrendas");
-    //TODO
-    //que materiales serian inconsistentes segun el tipo de prenda?
-  }
+  private boolean tipoMaterialNoCondiceConTipoPrenda(TipoMaterial tipoMaterial) {
+    if(tipoMaterial == TipoMaterial.CUERO && this.tipo == TipoPrenda.CAMISA){
+      return true;
+    }
+    if(tipoMaterial == TipoMaterial.CUERO && this.tipo == TipoPrenda.LENTES){
+      return true;
+    }
+    if(tipoMaterial == TipoMaterial.DE_VESTIR && this.tipo == TipoPrenda.BERMUDA){
+      return true;
+    }
+    if(tipoMaterial == TipoMaterial.DE_VESTIR && this.tipo == TipoPrenda.LENTES){
+      return true;
+    }
 
-  public Prenda generarPrenda(){
-    return new Prenda(this.tipo, this.materialConstruccion);
-  }
-
-  public CategoriaPrenda identificarCategoria() {
-    return tipo.getCategoria();
+    //Aca se podrían agregar mas condiciones a mano, no es muy mantenible pero no le estoy dando mucha importancia porque
+    //no era muy importante en el ejercicio
+    return false;
   }
 }

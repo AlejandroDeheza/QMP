@@ -2,18 +2,17 @@
 
 ## Aclaracion
 
-No estoy cumpliendo con el siguiente requerimiento:
+Para el siguiente requerimiento:
 
 ~~~
-Como usuarie de QuéMePongo, quiero crear una prenda especificando en segundo lugar los aspectos relacionados a su 
-material (colores, material, trama, etc) para evitar elegir materiales inconsistentes con el tipo de prenda.
+Como usuarie de QuéMePongo, quiero crear una prenda especificando en segundo lugar 
+los aspectos relacionados a su material (colores, material, trama, etc) para evitar 
+elegir materiales inconsistentes con el tipo de prenda.
 ~~~
 
-Ya que me surgieron algunas dudas:
-
-* ¿A qué se refiere con "etc" en el requerimiento? ¿Qué otros aspectos relacionados con el material hay?
-
-* ¿Qué materiales serian inconsistentes segun el tipo de prenda? ¿En qué me debería basar para saberlo?
+No estoy dando importancia a como se relacionan TIPOS de prenda con los MATERIALES para saber cuando se condicen y cuando no, 
+ya que parece que no es relevante para este ejercicio. De todas formas, la clase "GeneradorDePrendas" es la que se 
+encarga de validar esto cuando se ingresa el material de la prenda, delegando esta funcionalidad a uno de sus metodos.
 
 
 
@@ -61,18 +60,18 @@ Ya que me surgieron algunas dudas:
 
 class MaterialConstruccion {
 
-  private TipoMaterial tipoMaterial;
-  private Trama trama = Trama.LISA;
-  private Color colorPrincipal;
-  private Color colorSecundario;
+  private TipoMaterial tipoMaterial
+  private Trama trama = Trama.LISA
+  private Color colorPrincipal
+  private Color colorSecundario
 
   MaterialConstruccion(TipoMaterial tipoMaterial, Trama trama, Color colorPrincipal, Color colorSecundario){
-    this.tipoMaterial = tipoMaterial;
+    this.tipoMaterial = tipoMaterial
     if(trama != null){
-      this.trama = trama;
+      this.trama = trama
     }
-    this.colorPrincipal = colorPrincipal;
-    this.colorSecundario = colorSecundario;
+    this.colorPrincipal = colorPrincipal
+    this.colorSecundario = colorSecundario
   }
 }
 
@@ -82,34 +81,36 @@ enum Trama{
 
 class GeneradorDePrendas {
 
-  TipoPrenda tipo;
-  MaterialConstruccion materialConstruccion;
+  TipoPrenda tipo
+  MaterialConstruccion materialConstruccion
 
   public GeneradorDePrendas(TipoPrenda tipo){
     if(tipo == null){
-      throw new PrendaInvalidaException("Falta ingresar TIPO de la prenda");
+      throw new PrendaInvalidaException("Falta ingresar TIPO de la prenda")
     }
-    this.tipo = tipo;
+    this.tipo = tipo
   }
-
+  
   public void setMaterialPrenda(MaterialConstruccion materialConstruccion){
-    this.validarMaterialPrenda(materialConstruccion);
-    this.materialConstruccion = materialConstruccion;
+    this.validarMaterialPrenda(materialConstruccion)
+    this.materialConstruccion = materialConstruccion
+  }
+  
+  public Prenda generarPrenda(){
+    return new Prenda(this.tipo, this.materialConstruccion)
   }
 
   private void validarMaterialPrenda(MaterialConstruccion materialConstruccion) {
-    //TODO
-    "Como usuarie de QuéMePongo, quiero crear una prenda especificando en segundo lugar los aspectos relacionados 
-    a su material (colores, material, trama, etc) para evitar elegir materiales inconsistentes con el tipo de prenda."
-    Para preguntar: :warning:
-    a que se refiere con etc en el requerimiento? aspectos relacionados a su material? cuales mas?
-    despues dice "para evitar elegir materiales inconsistentes con el tipo de prenda."
-    que materiales serian inconsistentes segun el tipo de prenda?
-  }
-
-  public Prenda generarPrenda(){
-    this.validarPrenda();
-    return new Prenda(this.tipo, this.materialConstruccion);
+    if(materialConstruccion.getTipoMaterial() == null){
+      throw new PrendaInvalidaException("Falta ingresar el TIPO DE MATERIAL DE CONSTRUCCION de la prenda")
+    }
+    if(materialConstruccion.getColorPrincipal() == null){
+      throw new PrendaInvalidaException("Falta ingresar COLOR PRINCIPAL de la prenda")
+    }
+    if(materialConstruccionNoCondiceConElTipo(materialConstruccion.getTipoMaterial())){
+      throw new PrendaInvalidaException(
+          "El TIPO DE MATERIAL DE CONSTRUCCION ingresado no condice con el TIPO DE PRENDA ingresado anteriormente")
+    }
   }
 }
 
@@ -118,17 +119,17 @@ class GeneradorDePrendas {
 
 class Usuario{
     
-    List<Uniforme> sugerencias;
+    List<Uniforme> sugerencias
     
     public void agregarSugerencia(Uniforme sugerencia){
-        sugerencias.add(sugerencia);
+        sugerencias.add(sugerencia)
     }
 }
 
 class Uniforme{
-    Prenda prendaSuperior;
-    Prenda prendaInferior;
-    Prenda calzado;
+    Prenda prendaSuperior
+    Prenda prendaInferior
+    Prenda calzado
 }
 
 abstract class Institucion {
@@ -136,9 +137,9 @@ abstract class Institucion {
   abstract Uniforme crearUniforme()
 
   Prenda generarPrenda(TipoPrenda tipo, TipoMaterial material, Trama trama, Color colorPrimario, Color colorSecundario){
-    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas(tipo);
+    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas(tipo)
     ...
-    return generadorDePrendas.generarPrenda();
+    return generadorDePrendas.generarPrenda()
   }
 }
 

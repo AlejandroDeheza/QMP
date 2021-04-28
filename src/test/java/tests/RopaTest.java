@@ -48,10 +48,18 @@ public class RopaTest {
   }
 
   @Test
-  public void siCreoUnaPrendaTipoMaterialSeGeneraPrendaInvalidaException() {
+  public void siCreoUnaPrendaSinTipoMaterialSeGeneraPrendaInvalidaException() {
     GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas(TipoPrenda.BERMUDA);
     MaterialConstruccion materialConstruccion = new MaterialConstruccion(
         null, null, new Color(1, 2, 3), null);
+    Assertions.assertThrows(PrendaInvalidaException.class, () -> generadorDePrendas.setMaterialPrenda(materialConstruccion));
+  }
+
+  @Test
+  public void siCreoUnaPrendaQueNoCondiceMaterialConTipoPrendaSeGeneraPrendaInvalidaException() {
+    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas(TipoPrenda.CAMISA);
+    MaterialConstruccion materialConstruccion = new MaterialConstruccion(
+        TipoMaterial.CUERO, null, new Color(1, 2, 3), null);
     Assertions.assertThrows(PrendaInvalidaException.class, () -> generadorDePrendas.setMaterialPrenda(materialConstruccion));
   }
 
