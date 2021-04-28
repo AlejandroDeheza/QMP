@@ -1,96 +1,110 @@
 package tests;
 
-import excepciones.FaltaTipoDePrendaException;
 import excepciones.PrendaInvalidaException;
-import excepciones.TipoDePrendaInvalidaException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import ropa.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class RopaTest {
 
-  private static final RepositorioTipoPrendas repo = RepositorioTipoPrendas.instance();
-
-  public void pedirCategoriaDeGorraAlRepo() {
-
-    repo.buscarCategoria("gorra");
-  }
-
   @BeforeAll
-  public static void llenarRepoConDatos() {
-    List<String> partesSuperiores = new ArrayList<>();
-    List<String> partesInferiores = new ArrayList<>();
-    List<String> calzados = new ArrayList<>();
-    List<String> accesorios = new ArrayList<>();
-
-    partesSuperiores.add("camisa");
-    partesSuperiores.add("remera");
-    partesSuperiores.add("campera");
-    repo.setPartesSuperiores(partesSuperiores);
-
-    partesInferiores.add("pantalon");
-    partesInferiores.add("bermuda");
-    repo.setPartesInferiores(partesInferiores);
-
-    calzados.add("zapatillas");
-    calzados.add("ojotas");
-    repo.setCalzados(calzados);
-
-    accesorios.add("lentes");
-    accesorios.add("corbata");
-    repo.setAccesorios(accesorios);
+  public static void hacerAlgo() {
   }
 
   @Test
-  public void siBuscoCategoriaDePantalonDaPARTE_INFERIOR() {
-    CategoriaPrenda categoriaEsperada = CategoriaPrenda.PARTE_INFERIOR;
-    CategoriaPrenda categoriaResultante = repo.buscarCategoria("pantalon");
-    Assertions.assertEquals(categoriaEsperada, categoriaResultante);
+  public void elGeneradorDePrendasIdentificaCategoriaCorrectamente(){
+    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas(TipoPrenda.BUZO);
+    Assertions.assertEquals(generadorDePrendas.identificarCategoria(), CategoriaPrenda.PARTE_SUPERIOR);
+    generadorDePrendas = new GeneradorDePrendas(TipoPrenda.ZAPATILLAS);
+    Assertions.assertEquals(generadorDePrendas.identificarCategoria(), CategoriaPrenda.CALZADO);
+    generadorDePrendas = new GeneradorDePrendas(TipoPrenda.PANTALON);
+    Assertions.assertEquals(generadorDePrendas.identificarCategoria(), CategoriaPrenda.PARTE_INFERIOR);
+    generadorDePrendas = new GeneradorDePrendas(TipoPrenda.LENTES);
+    Assertions.assertEquals(generadorDePrendas.identificarCategoria(), CategoriaPrenda.ACCESORIO);
   }
 
   @Test
-  public void siBuscoCategoriaDeGorraDaTipoDePrendaInvalidaException() {
-    Assertions.assertThrows(TipoDePrendaInvalidaException.class, this::pedirCategoriaDeGorraAlRepo);
+  public void siCreoUnaPrendaValidaNoRompe() {
+    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas(TipoPrenda.REMERA);
+    MaterialConstruccion materialConstruccion = new MaterialConstruccion(
+        TipoMaterial.ALGODON, null, new Color(1, 2, 3), null);
+    generadorDePrendas.setMaterialPrenda(materialConstruccion);
+    Assertions.assertDoesNotThrow(generadorDePrendas::generarPrenda);
   }
 
   @Test
-  public void siCreoUnaPrendaValidaNoPasaNada() {
-    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas();
-    generadorDePrendas.setTipoConCategoria("remera");
-    generadorDePrendas.setMaterialConstruccion(MaterialConstruccion.ALGODON);
-    generadorDePrendas.setColorPrincipal(new Color(1, 2, 3));
-    Assertions.assertDoesNotThrow(generadorDePrendas::getPrendaValida);
+  public void siCreoUnaPrendaSinTipoPrendaSeGeneraPrendaInvalidaException() {
+    Assertions.assertThrows(PrendaInvalidaException.class, () -> new GeneradorDePrendas(null));
   }
 
   @Test
-  public void siCreoUnaPrendaInvalidaDaPrendaInvalidaException() {
-    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas();
-    generadorDePrendas.setColorSecundario(new Color(1, 2, 3));
-    Assertions.assertThrows(PrendaInvalidaException.class, generadorDePrendas::getPrendaValida);
+  public void siCreoUnaPrendaSinColorPrincipalSeGeneraPrendaInvalidaException() {
+    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas(TipoPrenda.BERMUDA);
+    MaterialConstruccion materialConstruccion = new MaterialConstruccion(
+        TipoMaterial.ALGODON, null, null, new Color(1, 2, 3));
+    Assertions.assertThrows(PrendaInvalidaException.class, () -> generadorDePrendas.setMaterialPrenda(materialConstruccion));
   }
 
   @Test
-  public void siIngresoTipoDeRopaInvalidoDaTipoDePrendaInvalidaException() {
-    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas();
-    Assertions.assertThrows(TipoDePrendaInvalidaException.class, () -> generadorDePrendas.setTipoConCategoria("banana"));
-  }// uso lambda porque si no, no me deja. Creo que es porque la funcion tiene un parametro
-
-  @Test
-  public void siPidoCategoriaDespuesDeIngresarTipoDePrendaNoPasaNada() {
-    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas();
-    generadorDePrendas.setTipoConCategoria("remera");
-    Assertions.assertEquals(CategoriaPrenda.PARTE_SUPERIOR, generadorDePrendas.identificarCategoria());
+  public void siCreoUnaPrendaSinTipoMaterialSeGeneraPrendaInvalidaException() {
+    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas(TipoPrenda.BERMUDA);
+    MaterialConstruccion materialConstruccion = new MaterialConstruccion(
+        null, null, new Color(1, 2, 3), null);
+    Assertions.assertThrows(PrendaInvalidaException.class, () -> generadorDePrendas.setMaterialPrenda(materialConstruccion));
   }
 
   @Test
-  public void siPidoCategoriaSinIngresarTipoDaFaltaTipoDePrendaException() {
-    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas();
-    Assertions.assertThrows(FaltaTipoDePrendaException.class, generadorDePrendas::identificarCategoria);
+  public void siCreoUnaPrendaQueNoCondiceMaterialConTipoPrendaSeGeneraPrendaInvalidaException() {
+    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas(TipoPrenda.CAMISA);
+    MaterialConstruccion materialConstruccion = new MaterialConstruccion(
+        TipoMaterial.CUERO, null, new Color(1, 2, 3), null);
+    Assertions.assertThrows(PrendaInvalidaException.class, () -> generadorDePrendas.setMaterialPrenda(materialConstruccion));
+  }
+
+  ///
+
+  @Test
+  public void ColegioSanJuanGeneraUniformeCorrectamente() {
+    Institucion sanJuan = new ColegioSanJuan();
+    Uniforme uniforme = sanJuan.crearUniforme();
+    Assertions.assertEquals(TipoPrenda.CHOMBA, uniforme.getPrendaSuperior().getTipo());
+    Assertions.assertEquals(TipoMaterial.PIQUE, uniforme.getPrendaSuperior().getTipoMaterialConstruccion());
+    Assertions.assertEquals(Integer.valueOf(0), uniforme.getPrendaSuperior().getColorPrincipal().getRojo());
+    Assertions.assertEquals(Integer.valueOf(255), uniforme.getPrendaSuperior().getColorPrincipal().getVerde());
+    Assertions.assertEquals(Integer.valueOf(0), uniforme.getPrendaSuperior().getColorPrincipal().getAzul());
+    Assertions.assertEquals(TipoPrenda.PANTALON, uniforme.getPrendaInferior().getTipo());
+    Assertions.assertEquals(TipoMaterial.ACETATO, uniforme.getPrendaInferior().getTipoMaterialConstruccion());
+    Assertions.assertEquals(Integer.valueOf(150), uniforme.getPrendaInferior().getColorPrincipal().getRojo());
+    Assertions.assertEquals(Integer.valueOf(152), uniforme.getPrendaInferior().getColorPrincipal().getVerde());
+    Assertions.assertEquals(Integer.valueOf(154), uniforme.getPrendaInferior().getColorPrincipal().getAzul());
+    Assertions.assertEquals(TipoPrenda.ZAPATILLAS, uniforme.getCalzado().getTipo());
+    Assertions.assertEquals(TipoMaterial.POLIESTER, uniforme.getCalzado().getTipoMaterialConstruccion());
+    Assertions.assertEquals(Integer.valueOf(255), uniforme.getCalzado().getColorPrincipal().getRojo());
+    Assertions.assertEquals(Integer.valueOf(255), uniforme.getCalzado().getColorPrincipal().getVerde());
+    Assertions.assertEquals(Integer.valueOf(255), uniforme.getCalzado().getColorPrincipal().getAzul());
+  }
+
+  @Test
+  public void InstitutoJohnsonGeneraUniformeCorrectamente() {
+    Institucion johnson = new InstitutoJohnson();
+    Uniforme uniforme = johnson.crearUniforme();
+    Assertions.assertEquals(TipoPrenda.CAMISA, uniforme.getPrendaSuperior().getTipo());
+    Assertions.assertEquals(TipoMaterial.ALGODON, uniforme.getPrendaSuperior().getTipoMaterialConstruccion());
+    Assertions.assertEquals(Integer.valueOf(255), uniforme.getPrendaSuperior().getColorPrincipal().getRojo());
+    Assertions.assertEquals(Integer.valueOf(255), uniforme.getPrendaSuperior().getColorPrincipal().getVerde());
+    Assertions.assertEquals(Integer.valueOf(255), uniforme.getPrendaSuperior().getColorPrincipal().getAzul());
+    Assertions.assertEquals(TipoPrenda.PANTALON, uniforme.getPrendaInferior().getTipo());
+    Assertions.assertEquals(TipoMaterial.DE_VESTIR, uniforme.getPrendaInferior().getTipoMaterialConstruccion());
+    Assertions.assertEquals(Integer.valueOf(0), uniforme.getPrendaInferior().getColorPrincipal().getRojo());
+    Assertions.assertEquals(Integer.valueOf(0), uniforme.getPrendaInferior().getColorPrincipal().getVerde());
+    Assertions.assertEquals(Integer.valueOf(0), uniforme.getPrendaInferior().getColorPrincipal().getAzul());
+    Assertions.assertEquals(TipoPrenda.ZAPATOS, uniforme.getCalzado().getTipo());
+    Assertions.assertEquals(TipoMaterial.CUERO, uniforme.getCalzado().getTipoMaterialConstruccion());
+    Assertions.assertEquals(Integer.valueOf(0), uniforme.getCalzado().getColorPrincipal().getRojo());
+    Assertions.assertEquals(Integer.valueOf(0), uniforme.getCalzado().getColorPrincipal().getVerde());
+    Assertions.assertEquals(Integer.valueOf(0), uniforme.getCalzado().getColorPrincipal().getAzul());
   }
 
 }

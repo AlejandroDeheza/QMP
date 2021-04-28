@@ -1,61 +1,61 @@
 package ropa;
 
-import excepciones.FaltaTipoDePrendaException;
 import excepciones.PrendaInvalidaException;
 
 public class GeneradorDePrendas {
 
-  private Prenda prenda = new Prenda();
+  private TipoPrenda tipo;
+  private MaterialConstruccion materialConstruccion;
 
-
-
-  public void configurarNuevaPrenda() {
-    prenda = new Prenda();
+  public GeneradorDePrendas(TipoPrenda tipo){
+    if(tipo == null){
+      throw new PrendaInvalidaException("Falta ingresar TIPO de la prenda");
+    }
+    this.tipo = tipo;
   }
-
-
-
-  public void setTipoConCategoria(String tipoPrenda) {
-    CategoriaPrenda categoria = RepositorioTipoPrendas.instance().buscarCategoria(tipoPrenda);
-    prenda.setTipo(tipoPrenda);
-    prenda.setCategoria(categoria);
-  }
-
-  public void setMaterialConstruccion(MaterialConstruccion materialConstruccion) {
-    prenda.setMaterialConstruccion(materialConstruccion);
-  }
-
-  public void setColorPrincipal(Color colorPrincipal) {
-    prenda.setColorPrincipal(colorPrincipal);
-  }
-
-  public void setColorSecundario(Color colorSecundario) {
-    prenda.setColorSecundario(colorSecundario);
-  }
-
-
-
 
   public CategoriaPrenda identificarCategoria() {
-
-    if (this.prenda.getTipo() == null) {
-      throw new FaltaTipoDePrendaException("Para Identificar la CATEGORIA de tu prenda primero es necesario ingresar su TIPO");
-    }
-    return prenda.getCategoria();
+    return tipo.getCategoria();
   }
 
-  public Prenda getPrendaValida() {
+  public void setMaterialPrenda(MaterialConstruccion materialConstruccion){
+    this.validarMaterialPrenda(materialConstruccion);
+    this.materialConstruccion = materialConstruccion;
+  }
 
-    if (esPrendaInvalida()) {
-      throw new PrendaInvalidaException("Falta tipo de prenda, material de construccion y/o color primario");
-    } else {
-      return prenda;
+  public Prenda generarPrenda(){
+    return new Prenda(this.tipo, this.materialConstruccion);
+  }
+
+  private void validarMaterialPrenda(MaterialConstruccion materialConstruccion) {
+    if(materialConstruccion.getTipoMaterial() == null){
+      throw new PrendaInvalidaException("Falta ingresar el TIPO DE MATERIAL DE CONSTRUCCION de la prenda");
+    }
+    if(materialConstruccion.getColorPrincipal() == null){
+      throw new PrendaInvalidaException("Falta ingresar COLOR PRINCIPAL de la prenda");
+    }
+    if(tipoMaterialNoCondiceConTipoPrenda(materialConstruccion.getTipoMaterial())){
+      throw new PrendaInvalidaException(
+          "El TIPO DE MATERIAL DE CONSTRUCCION ingresado no condice con el TIPO DE PRENDA ingresado anteriormente");
     }
   }
 
-  private Boolean esPrendaInvalida(){
-    return this.prenda.getTipo() == null
-        || this.prenda.getMaterialConstruccion() == null
-        || this.prenda.getColorPrincipal() == null;
+  private boolean tipoMaterialNoCondiceConTipoPrenda(TipoMaterial tipoMaterial) {
+    if(tipoMaterial == TipoMaterial.CUERO && this.tipo == TipoPrenda.CAMISA){
+      return true;
+    }
+    if(tipoMaterial == TipoMaterial.CUERO && this.tipo == TipoPrenda.LENTES){
+      return true;
+    }
+    if(tipoMaterial == TipoMaterial.DE_VESTIR && this.tipo == TipoPrenda.BERMUDA){
+      return true;
+    }
+    if(tipoMaterial == TipoMaterial.DE_VESTIR && this.tipo == TipoPrenda.LENTES){
+      return true;
+    }
+
+    //Aca se podrían agregar mas condiciones a mano, no es muy mantenible pero no le estoy dando mucha importancia porque
+    //no era muy importante en el ejercicio
+    return false;
   }
 }

@@ -1,0 +1,80 @@
+@startuml
+class ropa.Uniforme {
+}
+class ropa.Usuario {
++ void agregarSugerencia(Uniforme)
+}
+abstract class ropa.Institucion {
++ {abstract}Uniforme crearUniforme()
++ Prenda generarPrenda(TipoPrenda,TipoMaterial,Trama,Color,Color)
+}
+class ropa.ColegioSanJuan {
++ Uniforme crearUniforme()
+}
+class ropa.InstitutoJohnson {
++ Uniforme crearUniforme()
+}
+class ropa.Prenda {
+}
+class ropa.GeneradorDePrendas {
++ void setMaterialPrenda(MaterialConstruccion)
++ Prenda generarPrenda()
++ CategoriaPrenda identificarCategoria()
+}
+class ropa.MaterialConstruccion {
+}
+enum ropa.TipoPrenda {
+CHOMBA
+CAMISA
+ZAPATOS
+ZAPATILLAS
+PANTALON
+}
+enum ropa.CategoriaPrenda {
+PARTE_SUPERIOR
+CALZADO
+PARTE_INFERIOR
+ACCESORIO
+}
+enum ropa.TipoMaterial {
+ALGODON
+CUERO
+POLIESTER
+PIQUE
+ACETATO
+DE_VESTIR
+}
+enum ropa.Trama {
+LISA
+RAYADA
+CON_LUNARES
+A_CUADROS
+ESTAMPADO
+}
+class ropa.Color {
+- Integer rojo
+- Integer verde
+- Integer azul
+}
+
+ropa.Institucion <|-- ropa.InstitutoJohnson
+ropa.Institucion <|-- ropa.ColegioSanJuan
+ropa.Prenda <-- ropa.Uniforme: prendaSuperior
+ropa.Prenda <-- ropa.Uniforme: prendaInferior
+ropa.Prenda <-- ropa.Uniforme: calzado
+ropa.Uniforme "*" <-- ropa.Usuario: sugerencias
+ropa.Uniforme <.. ropa.ColegioSanJuan
+ropa.Uniforme <.. ropa.InstitutoJohnson
+ropa.MaterialConstruccion <-- ropa.Prenda: materialConstruccion
+ropa.MaterialConstruccion <-- ropa.GeneradorDePrendas: materialConstruccion
+ropa.TipoPrenda <-- ropa.Prenda: tipo
+ropa.TipoPrenda <-- ropa.GeneradorDePrendas: tipo
+ropa.TipoMaterial <-- ropa.MaterialConstruccion: tipoMaterial
+ropa.Trama <-- ropa.MaterialConstruccion: trama
+ropa.Color <-- ropa.MaterialConstruccion: colorPrincipal
+ropa.Color <-- ropa.MaterialConstruccion: colorSecundario
+ropa.CategoriaPrenda <-- ropa.TipoPrenda: categoria
+ropa.GeneradorDePrendas <.. ropa.Institucion
+ropa.Prenda <.. ropa.GeneradorDePrendas
+
+@enduml
