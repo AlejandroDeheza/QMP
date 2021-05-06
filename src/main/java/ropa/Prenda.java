@@ -3,11 +3,17 @@ package ropa;
 public class Prenda {
 
   private TipoPrenda tipo;
-  private MaterialConstruccion materialConstruccion;
+  private TipoMaterial tipoMaterial;
+  private Trama trama;
+  private Color colorPrincipal;
+  private Color colorSecundario;
 
-  Prenda(TipoPrenda tipo, MaterialConstruccion materialConstruccion){
+  public Prenda(TipoPrenda tipo, TipoMaterial tipoMaterial, Trama trama, Color colorPrincipal, Color colorSecundario){
     this.tipo = tipo;
-    this.materialConstruccion = materialConstruccion;
+    this.tipoMaterial = tipoMaterial;
+    this.trama = trama;
+    this.colorPrincipal = colorPrincipal;
+    this.colorSecundario = colorSecundario;
   }
 
 
@@ -20,19 +26,20 @@ public class Prenda {
     return tipo.getCategoria();
   }
 
-  public TipoMaterial getTipoMaterialConstruccion() {
-    return materialConstruccion.getTipoMaterial();
+  public TipoMaterial getTipoMaterial() {
+    return tipoMaterial;
   }
 
   public Trama getTrama() {
-    return materialConstruccion.getTrama();
+    return trama;
   }
 
   public Color getColorPrincipal() {
-    return materialConstruccion.getColorPrincipal();
+    return colorPrincipal;
   }
 
   public Color getColorSecundario() {
-    return materialConstruccion.getColorSecundario();
+    return colorSecundario;
   }
+
 }

@@ -24,12 +24,8 @@ encarga de validar esto cuando se ingresa el material de la prenda, delegando es
 
 ## Explicacion
 
-* Se agregó la abstraccion "MaterialConstruccion" separándola de la "Prenda" y se dejó una referencia a ella desde "Prenda". 
-  Esto permite tener 2 abstracciones más cohesivas a costa de tenerlas un poco acopladas.
-  
-
-* La clase "GeneradorDePrendas" estaría representando un builder para configurar "Prenda". Esto permite utilizar una 
-  instancia de "GeneradorDePrendas" como un borrador para despues continuar configurando una prenda. 
+* La clase "BorradorDePrendas" estaría representando un builder para configurar "Prenda". Esto permite utilizar una 
+  instancia de "BorradorDePrendas" como un borrador para despues continuar configurando una prenda. 
   Antes de generar una "Prenda", el "GeneradorDePrendas" se encarga de validar lo ingresado.
 
 
@@ -41,10 +37,9 @@ encarga de validar esto cuando se ingresa el material de la prenda, delegando es
 
 
 * El metodo "crearUniforme()" de la clase "Institucion" estaría representando un factory method. 
-  El cual se implementa en las subclases "ColegioSanJuan" e "InstitutoJohnson". Esto permite agregar 
+  Los hook method se implementan en las subclases "ColegioSanJuan" e "InstitutoJohnson". Esto permite agregar 
   nuevas Instituciones para configurar diferentes Uniformes a futuro. Esto permite que el sistema sea más extensible. 
-  Además de que, al menos en este caso, permite no repetir logica al tener los metodos comunes en la superclase abstracta.
-  El metodo en comun es "generarPrenda(...)".
+  Además de que permite no repetir logica al tener los metodos comunes en la superclase abstracta.
   
 
 ## Diagrama de clases - SOLUCION COMPLETA
@@ -58,20 +53,20 @@ encarga de validar esto cuando se ingresa el material de la prenda, delegando es
 
 ~~~
 
-class MaterialConstruccion {
+public class Prenda {
 
-  private TipoMaterial tipoMaterial
-  private Trama trama = Trama.LISA
-  private Color colorPrincipal
-  private Color colorSecundario
+  private TipoPrenda tipo;
+  private TipoMaterial tipoMaterial;
+  private Trama trama;
+  private Color colorPrincipal;
+  private Color colorSecundario;
 
-  MaterialConstruccion(TipoMaterial tipoMaterial, Trama trama, Color colorPrincipal, Color colorSecundario){
-    this.tipoMaterial = tipoMaterial
-    if(trama != null){
-      this.trama = trama
-    }
-    this.colorPrincipal = colorPrincipal
-    this.colorSecundario = colorSecundario
+  public Prenda(TipoPrenda tipo, TipoMaterial tipoMaterial, Trama trama, Color colorPrincipal, Color colorSecundario){
+    this.tipo = tipo;
+    this.tipoMaterial = tipoMaterial;
+    this.trama = trama;
+    this.colorPrincipal = colorPrincipal;
+    this.colorSecundario = colorSecundario;
   }
 }
 
@@ -79,38 +74,59 @@ enum Trama{
     LISA, RAYADA, CON_LUNARES, A_CUADROS, ESTAMPADO
 }
 
-class GeneradorDePrendas {
+class BorradorDePrendas {
 
-  TipoPrenda tipo
-  MaterialConstruccion materialConstruccion
+  TipoPrenda tipo;
+  TipoMaterial tipoMaterial;
+  Trama trama = Trama.LISA; //valor por defecto
+  Color colorPrincipal;
+  Color colorSecundario;
 
-  public GeneradorDePrendas(TipoPrenda tipo){
-    if(tipo == null){
-      throw new PrendaInvalidaException("Falta ingresar TIPO de la prenda")
-    }
-    this.tipo = tipo
-  }
-  
-  public void setMaterialPrenda(MaterialConstruccion materialConstruccion){
-    this.validarMaterialPrenda(materialConstruccion)
-    this.materialConstruccion = materialConstruccion
-  }
-  
-  public Prenda generarPrenda(){
-    return new Prenda(this.tipo, this.materialConstruccion)
+  BorradorDePrendas(TipoPrenda tipo){
+    if(tipo == null)
+      throw new PrendaInvalidaException("Falta ingresar TIPO a la prenda");
+    this.tipo = tipo;
   }
 
-  private void validarMaterialPrenda(MaterialConstruccion materialConstruccion) {
-    if(materialConstruccion.getTipoMaterial() == null){
-      throw new PrendaInvalidaException("Falta ingresar el TIPO DE MATERIAL DE CONSTRUCCION de la prenda")
-    }
-    if(materialConstruccion.getColorPrincipal() == null){
-      throw new PrendaInvalidaException("Falta ingresar COLOR PRINCIPAL de la prenda")
-    }
-    if(materialConstruccionNoCondiceConElTipo(materialConstruccion.getTipoMaterial())){
+  BorradorDePrendas setTipoMaterial(TipoMaterial tipoMaterial){
+    if(tipoMaterialNoCondiceConTipoPrenda(tipoMaterial)){
       throw new PrendaInvalidaException(
-          "El TIPO DE MATERIAL DE CONSTRUCCION ingresado no condice con el TIPO DE PRENDA ingresado anteriormente")
+          "El TIPO DE MATERIAL DE CONSTRUCCION ingresado no condice con el TIPO DE PRENDA ingresado anteriormente");
     }
+    this.tipoMaterial = tipoMaterial;
+    return this;
+  }
+
+  BorradorDePrendas setTrama(Trama trama){
+    if(trama != null){
+      this.trama = trama;
+    }
+    return this;
+  }
+
+  BorradorDePrendas setColorPrincipal(Color colorPrincipal){
+    if(colorPrincipal == null)
+      throw new PrendaInvalidaException("Falta ingresar COLOR PRINCIPAL a la prenda");
+    this.colorPrincipal = colorPrincipal;
+    return this;
+  }
+
+  BorradorDePrendas setColorSecundario(Color colorSecundario){
+    this.colorSecundario = colorSecundario;
+    return this;
+  }
+
+  CategoriaPrenda identificarCategoria() {
+    return tipo.getCategoria();
+  }
+
+  Prenda generarPrenda(){
+    if(tipoMaterial == null)
+      throw new PrendaInvalidaException("Falta ingresar TIPO DE MATERIAL DE CONSTRUCCION a la prenda");
+    if(colorPrincipal == null)
+      throw new PrendaInvalidaException("Falta ingresar COLOR PRINCIPAL a la prenda");
+
+    return new Prenda(tipo, tipoMaterial, trama, colorPrincipal, colorSecundario);
   }
 }
 
@@ -134,34 +150,42 @@ class Uniforme{
 
 abstract class Institucion {
 
-  abstract Uniforme crearUniforme()
-
-  Prenda generarPrenda(TipoPrenda tipo, TipoMaterial material, Trama trama, Color colorPrimario, Color colorSecundario){
-    GeneradorDePrendas generadorDePrendas = new GeneradorDePrendas(tipo)
-    ...
-    return generadorDePrendas.generarPrenda()
+  public Uniforme crearUniforme() {
+    return new Uniforme(this.generarParteSuperior(), this.generarParteInferior(), this.generarCalzado());
   }
+
+  protected abstract Prenda generarParteSuperior();
+  protected abstract Prenda generarParteInferior();
+  protected abstract Prenda generarCalzado();
 }
 
 class ColegioSanJuan extends Institucion{
 
-  public Uniforme crearUniforme() {
-    Prenda prendaSuperior = this.generarPrenda(...)
-    Prenda prendaInferior = this.generarPrenda(...)
-    Prenda calzado = this.generarPrenda(...)
-    
-    return new Uniforme(prendaSuperior, prendaInferior, calzado)
+  protected abstract Prenda generarParteSuperior(){
+    ...
+  }
+  
+  protected abstract Prenda generarParteInferior(){
+    ...
+  }
+  
+  protected abstract Prenda generarCalzado(){
+    ...
   }
 }
 
 class InstitutoJohnson extends Institucion{
 
-  public Uniforme crearUniforme() {
-    Prenda prendaSuperior = this.generarPrenda(...)
-    Prenda prendaInferior = this.generarPrenda(...)
-    Prenda calzado = this.generarPrenda(...)
-
-    return new Uniforme(prendaSuperior, prendaInferior, calzado)
+  protected abstract Prenda generarParteSuperior(){
+    ...
+  }
+  
+  protected abstract Prenda generarParteInferior(){
+    ...
+  }
+  
+  protected abstract Prenda generarCalzado(){
+    ...
   }
 }
 
