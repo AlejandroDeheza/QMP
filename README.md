@@ -19,7 +19,7 @@ encarga de validar esto cuando se ingresa el material de la prenda, delegando es
 ## Diagrama de clases - REQUERIMIENTOS DE ESTA ITERACION
 
 <p align="center"> 
-<img src="diagramas/QMP-Segunda-Iteracion-resumido.png">
+<img src="diagramas/QMP2-R-resumido.png">
 </p>
 
 ## Explicacion
@@ -45,7 +45,7 @@ encarga de validar esto cuando se ingresa el material de la prenda, delegando es
 ## Diagrama de clases - SOLUCION COMPLETA
 
 <p align="center"> 
-<img src="diagramas/QMP-Segunda-Iteracion.png">
+<img src="diagramas/QMP2-R.png">
 </p>
 
 
