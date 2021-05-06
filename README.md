@@ -1,4 +1,4 @@
-# QMP-Segunda-Iteracion
+# QMP-Segunda-Iteracion-Refactorizado
 
 ## Aclaracion
 
