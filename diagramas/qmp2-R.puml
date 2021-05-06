@@ -1,0 +1,89 @@
+@startuml
+class ropa.Uniforme {
+}
+class ropa.Usuario {
++ void agregarSugerencia(Uniforme)
+}
+abstract class ropa.Institucion {
+public Uniforme crearUniforme()
+# abstract Prenda generarParteSuperior();
+# abstract Prenda generarParteInferior();
+# abstract Prenda generarCalzado();
+}
+class ropa.ColegioSanJuan {
+# Prenda generarParteSuperior()
+# Prenda generarParteInferior()
+# Prenda generarCalzado()
+}
+class ropa.InstitutoJohnson {
+# Prenda generarParteSuperior()
+# Prenda generarParteInferior()
+# Prenda generarCalzado()
+}
+class ropa.Prenda {
+}
+class ropa.BorradorDePrendas {
++ BorradorDePrendas setTipoMaterial(TipoMaterial tipoMaterial)
++ BorradorDePrendas setTrama(Trama trama)
++ BorradorDePrendas setColorPrincipal(Color colorPrincipal)
++ BorradorDePrendas setColorSecundario(Color colorSecundario)
++ CategoriaPrenda identificarCategoria()
++ Prenda generarPrenda()
+- boolean tipoMaterialNoCondiceConTipoPrenda(TipoMaterial tipoMaterial)
+}
+enum ropa.TipoPrenda {
+CHOMBA
+CAMISA
+ZAPATOS
+ZAPATILLAS
+PANTALON
+}
+enum ropa.CategoriaPrenda {
+PARTE_SUPERIOR
+CALZADO
+PARTE_INFERIOR
+ACCESORIO
+}
+enum ropa.TipoMaterial {
+ALGODON
+CUERO
+POLIESTER
+PIQUE
+ACETATO
+DE_VESTIR
+}
+enum ropa.Trama {
+LISA
+RAYADA
+CON_LUNARES
+A_CUADROS
+ESTAMPADO
+}
+class ropa.Color {
+- Integer rojo
+- Integer verde
+- Integer azul
+}
+
+ropa.Institucion <|-- ropa.InstitutoJohnson
+ropa.Institucion <|-- ropa.ColegioSanJuan
+ropa.Prenda <-- ropa.Uniforme
+ropa.Prenda <-- ropa.Uniforme
+ropa.Prenda <-- ropa.Uniforme
+ropa.Uniforme "*" <-- ropa.Usuario: sugerencias
+ropa.Uniforme <.. ropa.Institucion
+ropa.TipoPrenda <-- ropa.Prenda
+ropa.TipoMaterial <-- ropa.Prenda
+ropa.Trama <-- ropa.Prenda
+ropa.Color <-- ropa.Prenda
+ropa.Color <-- ropa.Prenda
+ropa.TipoPrenda <-- ropa.BorradorDePrendas
+ropa.TipoMaterial <-- ropa.BorradorDePrendas
+ropa.Trama <-- ropa.BorradorDePrendas
+ropa.Color <-- ropa.BorradorDePrendas
+ropa.Color <-- ropa.BorradorDePrendas
+ropa.CategoriaPrenda <-- ropa.TipoPrenda: categoria
+ropa.BorradorDePrendas <.. ropa.Institucion
+ropa.Prenda <.. ropa.BorradorDePrendas
+
+@enduml

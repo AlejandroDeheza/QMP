@@ -1,0 +1,45 @@
+@startuml
+class ropa.Uniforme {
+}
+class ropa.Usuario {
++ void agregarSugerencia(Uniforme)
+}
+abstract class ropa.Institucion {
+public Uniforme crearUniforme()
+# abstract Prenda generarParteSuperior();
+# abstract Prenda generarParteInferior();
+# abstract Prenda generarCalzado();
+}
+class ropa.ColegioSanJuan {
+# Prenda generarParteSuperior()
+# Prenda generarParteInferior()
+# Prenda generarCalzado()
+}
+class ropa.InstitutoJohnson {
+# Prenda generarParteSuperior()
+# Prenda generarParteInferior()
+# Prenda generarCalzado()
+}
+class ropa.Prenda {
+}
+class ropa.BorradorDePrendas {
++ BorradorDePrendas setTipoMaterial(TipoMaterial tipoMaterial)
++ BorradorDePrendas setTrama(Trama trama)
++ BorradorDePrendas setColorPrincipal(Color colorPrincipal)
++ BorradorDePrendas setColorSecundario(Color colorSecundario)
++ CategoriaPrenda identificarCategoria()
++ Prenda generarPrenda()
+- boolean tipoMaterialNoCondiceConTipoPrenda(TipoMaterial tipoMaterial)
+}
+
+ropa.Institucion <|-- ropa.InstitutoJohnson
+ropa.Institucion <|-- ropa.ColegioSanJuan
+ropa.Prenda <-- ropa.Uniforme: prendaSuperior
+ropa.Prenda <-- ropa.Uniforme: prendaInferior
+ropa.Prenda <-- ropa.Uniforme: calzado
+ropa.Uniforme "*" <-- ropa.Usuario: sugerencias
+ropa.Uniforme <.. ropa.Institucion
+ropa.BorradorDePrendas <.. ropa.Institucion
+ropa.Prenda <.. ropa.BorradorDePrendas
+
+@enduml

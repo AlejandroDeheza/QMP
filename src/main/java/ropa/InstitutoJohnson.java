@@ -2,16 +2,25 @@ package ropa;
 
 public class InstitutoJohnson extends Institucion{
 
-  @Override
-  public Uniforme crearUniforme() {
-
-    Prenda prendaSuperior = this.generarPrenda(
-        TipoPrenda.CAMISA, TipoMaterial.ALGODON, null, new Color(255, 255, 255), null);
-    Prenda prendaInferior = this.generarPrenda(
-        TipoPrenda.PANTALON, TipoMaterial.DE_VESTIR, null, new Color(0, 0, 0), null);
-    Prenda calzado = this.generarPrenda(
-        TipoPrenda.ZAPATOS, TipoMaterial.CUERO, null, new Color(0, 0, 0), null);
-
-    return new Uniforme(prendaSuperior, prendaInferior, calzado);
+  protected Prenda generarParteSuperior(){
+    BorradorDePrendas borradorDePrendas = new BorradorDePrendas(TipoPrenda.CAMISA)
+        .setTipoMaterial(TipoMaterial.ALGODON)
+        .setColorPrincipal(new Color(255, 255, 255));
+    return borradorDePrendas.generarPrenda();
   }
+
+  protected Prenda generarParteInferior(){
+    BorradorDePrendas borradorDePrendas = new BorradorDePrendas(TipoPrenda.PANTALON)
+        .setTipoMaterial(TipoMaterial.DE_VESTIR)
+        .setColorPrincipal(new Color(0, 0, 0));
+    return borradorDePrendas.generarPrenda();
+  }
+
+  protected Prenda generarCalzado(){
+    BorradorDePrendas borradorDePrendas = new BorradorDePrendas(TipoPrenda.ZAPATOS)
+        .setTipoMaterial(TipoMaterial.CUERO)
+        .setColorPrincipal(new Color(0, 0, 0));
+    return borradorDePrendas.generarPrenda();
+  }
+
 }
