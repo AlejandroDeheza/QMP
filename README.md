@@ -53,6 +53,69 @@ encarga de validar esto cuando se ingresa el material de la prenda, delegando es
 
 ~~~
 
+class Usuario {
+
+  private GeneradorSugerencias generador;
+  
+  public Clima obtenerClimaActual(buenosAires) {}
+  
+  public void agregarSugerencia(Atuendo sugerencia){
+    sugerencias.add(sugerencia);
+  }
+  
+  public void pedirSugerencia(String ciudad) {
+    agregarSugerencia(generador.generarSugerencia(String ciudad));
+  }
+
+}
+
+class Atuendo {
+
+  private List<Prenda> prendaSuperiores;
+  private List<Prenda> prendaInferiores;
+  private List<Prenda> calzados;
+  private List<Prenda> accesorios;
+}
+
+class GeneradorSugerencias {
+
+  private ServicioClima servicioClima = new ServicioClima();
+
+  public Atuendo generarSugerencia(String ciudad) {
+  
+    servicioClima.obtenerClimaActual(String ciudad);
+    ...
+    
+  }
+  
+}
+
+class ServicioClima implements AccuWeatherAPI { //????
+
+  private List<Map<String, Object>> condicionesClimaticas; //cache para ahorrar costes. TODO => revisar esto
+  
+  public Clima obtenerClimaActual(String ciudad) {
+    AccuWeatherAPI apiClima = new AccuWeatherAPI();
+    List<Map<String, Object>> condicionesClimaticas = apiClima.getWeather(ciudad);  
+    condicionesClimaticas.get(0).get("PrecipitationProbability"); //Devuelve un número del 0 al 1
+    ...
+  }
+  
+}
+
+
+
+
+//Como stakeholder de QuéMePongo, quiero poder asegurar la calidad de mi aplicación sin incurrir en costos innecesarios. 
+// ==>> usar moks para testear
+
+
+
+
+~~~
+
+~~~
+
 public class Prenda {
 
   private TipoPrenda tipo;
