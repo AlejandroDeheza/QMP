@@ -1,12 +1,14 @@
-package ropa;
+package dominio.uniforme;
+
+import dominio.ropa.Prenda;
 
 public class Uniforme {
 
-  private Prenda prendaSuperior;
-  private Prenda prendaInferior;
-  private Prenda calzado;
+  private final Prenda prendaSuperior;
+  private final Prenda prendaInferior;
+  private final Prenda calzado;
 
-  public Uniforme(Prenda prendaSuperior, Prenda prendaInferior, Prenda calzado){
+  public Uniforme(Prenda prendaSuperior, Prenda prendaInferior, Prenda calzado) {
     this.prendaSuperior = prendaSuperior;
     this.prendaInferior = prendaInferior;
     this.calzado = calzado;

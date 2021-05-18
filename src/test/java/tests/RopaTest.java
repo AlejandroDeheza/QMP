@@ -5,7 +5,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import ropa.*;
+import dominio.ropa.*;
+import dominio.uniforme.ColegioSanJuan;
+import dominio.uniforme.Institucion;
+import dominio.uniforme.InstitutoJohnson;
+import dominio.uniforme.Uniforme;
 
 public class RopaTest {
 

@@ -1,51 +1,44 @@
-# QMP-Segunda-Iteracion-Refactorizado
-
-## Aclaracion
-
-Para el siguiente requerimiento:
-
-~~~
-Como usuarie de QuéMePongo, quiero crear una prenda especificando en segundo lugar 
-los aspectos relacionados a su material (colores, material, trama, etc) para evitar 
-elegir materiales inconsistentes con el tipo de prenda.
-~~~
-
-No estoy dando importancia a como se relacionan TIPOS de prenda con los MATERIALES para saber cuando se condicen y cuando no, 
-ya que parece que no es relevante para este ejercicio. De todas formas, la clase "GeneradorDePrendas" es la que se 
-encarga de validar esto cuando se ingresa el material de la prenda, delegando esta funcionalidad a uno de sus metodos.
-
-
+# QMP-Cuarta-Iteracion
 
 ## Diagrama de clases - REQUERIMIENTOS DE ESTA ITERACION
 
 <p align="center"> 
-<img src="diagramas/QMP2-R-resumido.png">
+<img src="diagramas/QMP4-resumido.png">
 </p>
 
 ## Explicacion
 
-* La clase "BorradorDePrendas" estaría representando un builder para configurar "Prenda". Esto permite utilizar una 
-  instancia de "BorradorDePrendas" como un borrador para despues continuar configurando una prenda. 
-  Antes de generar una "Prenda", el "GeneradorDePrendas" se encarga de validar lo ingresado.
+* Para que el Usuario pueda conocer las condiciones climaticas, se le agregó un metodo para consultar 
+  contra el ServicioClima directamente. Se podría consultar contra el GeneradorSugerencias, pero solo serviría para 
+  volver a delegar el mensaje en el ServicioClima. Además de que semánticamente no tendria mucho sentido.
 
 
-* Se agregó la abstraccion "Uniforme" con 3 atributos tipo "Prenda".
-
-
-* Se agregó la abstraccion "Usuario" con una lista "Sugerencias" de tipo "Uniforme" y un metodo para agregar Uniformes
-  para tratarlos como sugerencias recibidas.
-
-
-* El metodo "crearUniforme()" de la clase "Institucion" estaría representando un factory method. 
-  Los hook method se implementan en las subclases "ColegioSanJuan" e "InstitutoJohnson". Esto permite agregar 
-  nuevas Instituciones para configurar diferentes Uniformes a futuro. Esto permite que el sistema sea más extensible. 
-  Además de que permite no repetir logica al tener los metodos comunes en la superclase abstracta.
+* Para que se puedan recibir las sugerencias, se agregó la clase Atuendos con 4 listas, una para cada categoria de 
+  prenda, lo cual permite que se le puedan agregar más prendas a futuro sin problemas, lo cual hace que la solucion 
+  sea un poco más extensible.
   
+
+* Para que cada prenda tenga especificada su temperatura maxima soportable, se agregó el atributo 
+  "temperaturaMaximaDeUso" a cada TipoPrenda, lo cual permite tratarlas de manera polimórfica.
+  
+
+* Para poder configurar fácilmente diferentes servicios de obtención del clima se generó una interfaz "ServicioClima", 
+  para que las clases que lo implementen se encarguen de tener la logica necesaria para obtener el clima de un 
+  determinado proveedor. Esto permite agregar otra implementacion (en otra clase que implemente "ServicioClima") para 
+  otro proveedor manteniendo la misma interfaz. De esta forma, la implementacion especifica para obtener el clima 
+  no estaría acoplada al resto de nuestro sistema, lo que favorece la extensibilidad. Y además que nuestro sistema 
+  siempre va a consultar contra la misma interfaz, sin importar de que proveedor de clima se tratase.
+  
+
+* Para evitar costos adicionales, se decidio cachear los datos provistos por el ServicioClima para realizar la minima 
+  cantidad de consultas necesarias.
+  
+
 
 ## Diagrama de clases - SOLUCION COMPLETA
 
 <p align="center"> 
-<img src="diagramas/QMP2-R.png">
+<img src="diagramas/QMP4.png">
 </p>
 
 
@@ -53,140 +46,141 @@ encarga de validar esto cuando se ingresa el material de la prenda, delegando es
 
 ~~~
 
-public class Prenda {
+class Usuario {
 
-  private TipoPrenda tipo;
-  private TipoMaterial tipoMaterial;
-  private Trama trama;
-  private Color colorPrincipal;
-  private Color colorSecundario;
+  private final List<Prenda> guardarropas;
+  private final List<Atuendo> sugerencias;
+  private final GeneradorSugerencias generadorSugerencias;
+  private final ServicioClima servicioClima;
 
-  public Prenda(TipoPrenda tipo, TipoMaterial tipoMaterial, Trama trama, Color colorPrincipal, Color colorSecundario){
-    this.tipo = tipo;
-    this.tipoMaterial = tipoMaterial;
-    this.trama = trama;
-    this.colorPrincipal = colorPrincipal;
-    this.colorSecundario = colorSecundario;
+  public Usuario(List<Prenda> guardarropas, List<Atuendo> sugerencias, GeneradorSugerencias generadorSugerencias, 
+                ServicioClima servicioClima) {
+    this.guardarropas = guardarropas;
+    this.sugerencias = sugerencias;
+    this.generadorSugerencias = generadorSugerencias;
+    this.servicioClima = servicioClima;
+  }
+  
+  public Integer getTemperaturaCelciusActual(String ciudad) {
+    return servicioClima.getTemperaturaCelciusActual(ciudad);
+  }
+  
+  public void agregarSugerencia(Atuendo sugerencia){
+    sugerencias.add(sugerencia);
+  }
+  
+  public void pedirSugerenciaSegunClimaActual(String ciudad) {
+    agregarSugerencia(generador.generarSugerenciaSegunClimaActual(ciudad, guardarropas));
+  }
+
+}
+
+class Atuendo {
+
+  private List<Prenda> prendaSuperiores;
+  private List<Prenda> prendaInferiores;
+  private List<Prenda> calzados;
+  private List<Prenda> accesorios;
+}
+
+class GeneradorSugerencias {
+
+  private ServicioClima servicioClima;
+  
+  public GeneradorSugerencias(ServicioClima servicioClima) {
+    this.servicioClima = servicioClima;
+  }
+
+  public Atuendo generarSugerenciaSegunClimaActual(String ciudad, List<Prenda> prendas) {
+    Integer temperaturaActual = servicioClima.getTemperaturaCelciusActual(ciudad);
+    prendasAdecuadas = prendas.filter(prenda -> prenda.esAdecuadaPara(temperaturaActual));
+    return generarAtuendo(prendasAdecuadas);
+  }
+  
+  private Atuendo generarAtuendo(List<Prenda> prendas) {
+    return new Atuendo(); //TODO
+  }
+  
+}
+
+public enum TipoPrenda {
+
+  CHOMBA(CategoriaPrenda.PARTE_SUPERIOR, 50), CAMISA(CategoriaPrenda.PARTE_SUPERIOR, 50)
+  
+  private CategoriaPrenda categoria;
+  private Integer temperaturaMaximaDeUso;
+
+  TipoPrenda(CategoriaPrenda categoria, Integer temperaturaMaximaDeUso){
+    this.categoria = categoria;
+    this.temperaturaMaximaDeUso = temperaturaMaximaDeUso;
+  }
+
+  public CategoriaPrenda getCategoria(){
+    return this.categoria;
+  }
+  
+  public Integer getTemperaturaMaximaDeUso(){
+    return this.temperaturaMaximaDeUso;
+  }
+  
+  public Boolean esAdecuadaPara(Integer temperaturaActual){
+    return this.temperaturaMaximaDeUso >= temperaturaActual;
   }
 }
 
-enum Trama{
-    LISA, RAYADA, CON_LUNARES, A_CUADROS, ESTAMPADO
+interface ServicioClima {
+  
+  Integer getProbabilidadDePrecipitacionesActual(String ciudad);
+  
+  Integer getTemperaturaCelciusActual(String ciudad);
 }
 
-class BorradorDePrendas {
+class AccuWeather implements ServicioClima {
 
-  TipoPrenda tipo;
-  TipoMaterial tipoMaterial;
-  Trama trama = Trama.LISA; //valor por defecto
-  Color colorPrincipal;
-  Color colorSecundario;
+  private List<Map<String, Object>> condicionesClimaticas; //cacheado para ahorrar costes
+  private LocalDateTime ultimaConsultaDelCLima = LocalDateTime.now() - 13 horas;
+  
+  
+  private static AccuWeather INSTANCE;
 
-  BorradorDePrendas(TipoPrenda tipo){
-    if(tipo == null)
-      throw new PrendaInvalidaException("Falta ingresar TIPO a la prenda");
-    this.tipo = tipo;
-  }
+  //usariamos el constructor solo para tests
+  public AccuWeather() { }
 
-  BorradorDePrendas setTipoMaterial(TipoMaterial tipoMaterial){
-    if(tipoMaterialNoCondiceConTipoPrenda(tipoMaterial)){
-      throw new PrendaInvalidaException(
-          "El TIPO DE MATERIAL DE CONSTRUCCION ingresado no condice con el TIPO DE PRENDA ingresado anteriormente");
+  //usariamos el getInstance en el codigo
+  public static AccuWeather getInstance() {
+    if (INSTANCE == null) {
+      INSTANCE = new AccuWeather();
     }
-    this.tipoMaterial = tipoMaterial;
-    return this;
+    return INSTANCE;
   }
 
-  BorradorDePrendas setTrama(Trama trama){
-    if(trama != null){
-      this.trama = trama;
+  
+  public Integer getProbabilidadDePrecipitacionesActual(String ciudad) {
+    validarUltimaConsulta(ciudad) //logica repetida, no creo que valga la pena arreglarlo
+    return condicionesClimaticas.get(0).get("PrecipitationProbability"); //Devuelve un número del 0 al 1
+  }
+  
+  public Integer getTemperaturaCelciusActual(String ciudad) {
+    validarUltimaConsulta(ciudad) //logica repetida, no creo que valga la pena arreglarlo
+    return pasarACelcius(condicionesClimaticas.get(0).get("Temperature").get("Value"));
+  }
+  
+  private void validarUltimaConsulta(String ciudad) {
+    if (seConsultoClimaHaceMasDe(12 horas)) {
+      AccuWeatherAPI apiClima = new AccuWeatherAPI();
+      condicionesClimaticas = apiClima.getWeather(ciudad);
+      ultimaConsultaDelCLima = LocalDateTime.now(); 
     }
-    return this;
-  }
-
-  BorradorDePrendas setColorPrincipal(Color colorPrincipal){
-    if(colorPrincipal == null)
-      throw new PrendaInvalidaException("Falta ingresar COLOR PRINCIPAL a la prenda");
-    this.colorPrincipal = colorPrincipal;
-    return this;
-  }
-
-  BorradorDePrendas setColorSecundario(Color colorSecundario){
-    this.colorSecundario = colorSecundario;
-    return this;
-  }
-
-  CategoriaPrenda identificarCategoria() {
-    return tipo.getCategoria();
-  }
-
-  Prenda generarPrenda(){
-    if(tipoMaterial == null)
-      throw new PrendaInvalidaException("Falta ingresar TIPO DE MATERIAL DE CONSTRUCCION a la prenda");
-    if(colorPrincipal == null)
-      throw new PrendaInvalidaException("Falta ingresar COLOR PRINCIPAL a la prenda");
-
-    return new Prenda(tipo, tipoMaterial, trama, colorPrincipal, colorSecundario);
-  }
-}
-
-
-/////////////
-
-class Usuario{
-    
-    List<Uniforme> sugerencias
-    
-    public void agregarSugerencia(Uniforme sugerencia){
-        sugerencias.add(sugerencia)
-    }
-}
-
-class Uniforme{
-    Prenda prendaSuperior
-    Prenda prendaInferior
-    Prenda calzado
-}
-
-abstract class Institucion {
-
-  public Uniforme crearUniforme() {
-    return new Uniforme(this.generarParteSuperior(), this.generarParteInferior(), this.generarCalzado());
-  }
-
-  protected abstract Prenda generarParteSuperior();
-  protected abstract Prenda generarParteInferior();
-  protected abstract Prenda generarCalzado();
-}
-
-class ColegioSanJuan extends Institucion{
-
-  protected abstract Prenda generarParteSuperior(){
-    ...
   }
   
-  protected abstract Prenda generarParteInferior(){
-    ...
+  private Boolean seConsultoClimaHaceMasDe(periodo) {
+    return (LocalDateTime.now() - ultimaConsultaDelCLima) >= periodo //TODO
   }
   
-  protected abstract Prenda generarCalzado(){
-    ...
-  }
-}
-
-class InstitutoJohnson extends Institucion{
-
-  protected abstract Prenda generarParteSuperior(){
-    ...
+  private Integer pasarACelcius(Integer fahrenheit) {
+    return 33;  //TODO
   }
   
-  protected abstract Prenda generarParteInferior(){
-    ...
-  }
-  
-  protected abstract Prenda generarCalzado(){
-    ...
-  }
 }
 
 

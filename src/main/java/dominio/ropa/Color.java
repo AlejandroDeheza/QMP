@@ -1,12 +1,12 @@
-package ropa;
+package dominio.ropa;
 
 public class Color {
 
-  private Integer rojo;
-  private Integer verde;
-  private Integer azul;
+  private final Integer rojo;
+  private final Integer verde;
+  private final Integer azul;
 
-  public Color(Integer rojo, Integer verde, Integer azul){
+  public Color(Integer rojo, Integer verde, Integer azul) {
 
     this.rojo = rojo;
     this.verde = verde;

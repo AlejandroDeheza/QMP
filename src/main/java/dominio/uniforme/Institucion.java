@@ -1,4 +1,6 @@
-package ropa;
+package dominio.uniforme;
+
+import dominio.ropa.Prenda;
 
 public abstract class Institucion {
 
@@ -7,7 +9,9 @@ public abstract class Institucion {
   }
 
   protected abstract Prenda generarParteSuperior();
+
   protected abstract Prenda generarParteInferior();
+
   protected abstract Prenda generarCalzado();
 
 }

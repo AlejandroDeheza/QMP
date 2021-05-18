@@ -1,4 +1,4 @@
-package ropa;
+package dominio.ropa;
 
 public enum Trama {
   LISA, RAYADA, CON_LUNARES, A_CUADROS, ESTAMPADO
