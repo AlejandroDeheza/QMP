@@ -8,9 +8,6 @@ abstract class dominio.uniforme.Institucion {
 class dominio.clima.AccuWeatherAPI {
 + List<Map<String,Object>> getWeather(String)
 }
-interface dominio.clima.IAccuWeatherAPI {
-~ List<Map<String,Object>> getWeather(String)
-}
 class dominio.uniforme.InstitutoJohnson {
 # Prenda generarParteSuperior()
 # Prenda generarParteInferior()
@@ -100,10 +97,9 @@ dominio.ropa.Atuendo "*" <-- dominio.usuario.Usuario: sugerencias
 dominio.usuario.GeneradorSugerencias <--left dominio.usuario.Usuario: generadorSugerencias
 dominio.clima.ServicioClima <--up dominio.usuario.Usuario: servicioClima
 dominio.clima.ServicioClima <--up dominio.usuario.GeneradorSugerencias: servicioClima
-dominio.clima.IAccuWeatherAPI <..left dominio.clima.ServicioClima
 dominio.ropa.Atuendo <.. dominio.usuario.GeneradorSugerencias
 dominio.ropa.Prenda <.. dominio.usuario.GeneradorSugerencias
 
-dominio.clima.IAccuWeatherAPI <|.. dominio.clima.AccuWeatherAPI
+dominio.clima.AccuWeatherAPI <..left dominio.clima.AccuWeather
 dominio.clima.ServicioClima <|.. dominio.clima.AccuWeather
 @enduml

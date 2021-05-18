@@ -2,9 +2,8 @@ package dominio.clima;
 
 import java.util.*;
 
-public final class AccuWeatherAPI implements IAccuWeatherAPI {
+public final class AccuWeatherAPI {
 
-  @Override
   public final List<Map<String, Object>> getWeather(String ciudad) {
     return Arrays.asList(new HashMap<String, Object>() {{
       put("DateTime", "2019-05-03T01:00:00-03:00");
