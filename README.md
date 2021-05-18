@@ -48,13 +48,16 @@
 
 class Usuario {
 
-  private List<Atuendo> sugerencias = new ArrayList();
-  private GeneradorSugerencias generador;
-  private ServicioClima servicioClima;
-  private List<Prenda> guardarropas;
+  private final List<Prenda> guardarropas;
+  private final List<Atuendo> sugerencias;
+  private final GeneradorSugerencias generadorSugerencias;
+  private final ServicioClima servicioClima;
 
-  public Usuario(GeneradorSugerencias generador, ServicioClima servicioClima) {
-    this.generador = generador;
+  public Usuario(List<Prenda> guardarropas, List<Atuendo> sugerencias, GeneradorSugerencias generadorSugerencias, 
+                ServicioClima servicioClima) {
+    this.guardarropas = guardarropas;
+    this.sugerencias = sugerencias;
+    this.generadorSugerencias = generadorSugerencias;
     this.servicioClima = servicioClima;
   }
   
@@ -89,7 +92,6 @@ class GeneradorSugerencias {
   }
 
   public Atuendo generarSugerenciaSegunClimaActual(String ciudad, List<Prenda> prendas) {
-  
     Integer temperaturaActual = servicioClima.getTemperaturaCelciusActual(ciudad);
     prendasAdecuadas = prendas.filter(prenda -> prenda.esAdecuadaPara(temperaturaActual));
     return generarAtuendo(prendasAdecuadas);
@@ -136,7 +138,7 @@ interface ServicioClima {
 class AccuWeather implements ServicioClima {
 
   private List<Map<String, Object>> condicionesClimaticas; //cacheado para ahorrar costes
-  LocalDateTime ultimaConsultaDelCLima = LocalDateTime.now() - 13 horas;
+  private LocalDateTime ultimaConsultaDelCLima = LocalDateTime.now() - 13 horas;
   
   
   private static AccuWeather INSTANCE;
