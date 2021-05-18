@@ -55,16 +55,26 @@ encarga de validar esto cuando se ingresa el material de la prenda, delegando es
 
 class Usuario {
 
+  private List<Atuendo> sugerencias = new ArrayList();
   private GeneradorSugerencias generador;
+  private ServicioClima servicioClima;
+  private List<Prendas> guardarropas;
+
+  public Usuario(GeneradorSugerencias generador, ServicioClima servicioClima) {
+    this.generador = generador;
+    this.servicioClima = servicioClima;
+  }
   
-  public Clima obtenerClimaActual(buenosAires) {}
+  public Integer getTemperaturaCelcius(String ciudad) {
+    return servicioClima.getTemperaturaCelciusActual(ciudad);
+  }
   
   public void agregarSugerencia(Atuendo sugerencia){
     sugerencias.add(sugerencia);
   }
   
-  public void pedirSugerencia(String ciudad) {
-    agregarSugerencia(generador.generarSugerencia(String ciudad));
+  public void pedirSugerenciaSegunClima(String ciudad) {
+    agregarSugerencia(generador.generarSugerenciaSegunClima(ciudad, guardarropas));
   }
 
 }
@@ -79,37 +89,104 @@ class Atuendo {
 
 class GeneradorSugerencias {
 
-  private ServicioClima servicioClima = new ServicioClima();
-
-  public Atuendo generarSugerencia(String ciudad) {
+  private ServicioClima servicioClima;
   
-    servicioClima.obtenerClimaActual(String ciudad);
-    ...
-    
+  public GeneradorSugerencias(ServicioClima servicioClima) {
+    this.servicioClima = servicioClima;
+  }
+
+  public Atuendo generarSugerenciaSegunClimaActual(String ciudad, List<Prenda> prendas) {
+  
+    Integer temperaturaActual = servicioClima.getTemperaturaCelciusActual(String ciudad);
+    prendasAdecuadas = prendas.filter(prenda -> prenda.esAdecuadaPara(temperaturaActual));
+    return generarAtuendo(prendasAdecuadas);
+  }
+  
+  private Atuendo generarAtuendo(List<Prenda> prendas) {
+    return new Atuendo(); //TODO
   }
   
 }
 
-class ServicioClima implements AccuWeatherAPI { //????
+public enum TipoPrenda {
 
-  private List<Map<String, Object>> condicionesClimaticas; //cache para ahorrar costes. TODO => revisar esto
+  CHOMBA(CategoriaPrenda.PARTE_SUPERIOR, 50), CAMISA(CategoriaPrenda.PARTE_SUPERIOR, 50)
   
-  public Clima obtenerClimaActual(String ciudad) {
-    AccuWeatherAPI apiClima = new AccuWeatherAPI();
-    List<Map<String, Object>> condicionesClimaticas = apiClima.getWeather(ciudad);  
-    condicionesClimaticas.get(0).get("PrecipitationProbability"); //Devuelve un número del 0 al 1
-    ...
+  private CategoriaPrenda categoria;
+  private Integer temperaturaMaximaDeUso;
+
+  TipoPrenda(CategoriaPrenda categoria, Integer temperaturaMaximaDeUso){
+    this.categoria = categoria;
+    this.temperaturaMaximaDeUso = temperaturaMaximaDeUso;
+  }
+
+  public CategoriaPrenda getCategoria(){
+    return this.categoria;
+  }
+  
+  public Integer getTemperaturaMaximaDeUso(){
+    return this.temperaturaMaximaDeUso;
+  }
+  
+  public Boolean esAdecuadaPara(Integer temperaturaActual){
+    return this.temperaturaMaximaDeUso >= temperaturaActual;
+  }
+}
+
+interface ServicioClima {
+  
+  Integer getProbabilidadDePrecipitacionesActual(String ciudad);
+  
+  Integer getTemperaturaCelciusActual(String ciudad);
+}
+
+class AccuWeather implements ServicioClima {
+
+  private List<Map<String, Object>> condicionesClimaticas; //cacheado para ahorrar costes
+  LocalDateTime ultimaConsultaDelCLima = LocalDateTime.now() - 13 horas;
+  
+  
+  private static AccuWeather INSTANCE;
+
+  //usariamos el constructor solo para tests
+  public AccuWeather() { }
+
+  //usariamos el getInstance en el codigo
+  public static AccuWeather getInstance() {
+    if (INSTANCE == null) {
+      INSTANCE = new AccuWeather();
+    }
+    return INSTANCE;
+  }
+
+  
+  public Integer getProbabilidadDePrecipitacionesActual(String ciudad) {
+    validarUltimaConsulta() //logica repetida, no creo que valga la pena arreglarlo
+    return condicionesClimaticas.get(0).get("PrecipitationProbability"); //Devuelve un número del 0 al 1
+  }
+  
+  public Integer getTemperaturaCelciusActual(String ciudad) {
+    validarUltimaConsulta() //logica repetida, no creo que valga la pena arreglarlo
+    return pasarACelcius(condicionesClimaticas.get(0).get("Temperature").get("Value"));
+  }
+  
+  private void validarUltimaConsulta() {
+    if (seConsultoClimaHaceMasDe(12 horas)) {
+      AccuWeatherAPI apiClima = new AccuWeatherAPI();
+      condicionesClimaticas = apiClima.getWeather(ciudad);
+      ultimaConsultaDelCLima = LocalDateTime.now(); 
+    }
+  }
+  
+  private Boolean seConsultoClimaHaceMasDe(periodo) {
+    return (LocalDateTime.now() - ultimaConsultaDelCLima) > periodo //TODO
+  }
+  
+  private Integer pasarACelcius(Integer fahrenheit) {
+    return 33;  //TODO
   }
   
 }
-
-
-
-
-//Como stakeholder de QuéMePongo, quiero poder asegurar la calidad de mi aplicación sin incurrir en costos innecesarios. 
-// ==>> usar moks para testear
-
-
 
 
 ~~~
