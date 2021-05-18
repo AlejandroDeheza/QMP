@@ -11,7 +11,7 @@ import static java.time.temporal.ChronoUnit.HOURS;
 public class AccuWeather implements ServicioClima {
 
   private List<Map<String, Object>> condicionesClimaticas;
-  LocalDateTime ultimaConsultaDelCLima = LocalDateTime.now().minus(DAYS.getDuration());
+  private LocalDateTime ultimaConsultaDelCLima = LocalDateTime.now().minus(DAYS.getDuration());
 
 
   private static AccuWeather INSTANCE;

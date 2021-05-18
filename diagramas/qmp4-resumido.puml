@@ -6,11 +6,10 @@ class dominio.usuario.Usuario {
 + Integer getTemperaturaCelciusActual(String)
 + void agregarSugerencia(Atuendo)
 + void pedirSugerenciaSegunClimaActual(String)
-+ void agregarSugerenciaUniforme(Uniforme)
 }
 class dominio.clima.AccuWeather {
 - List<Map<String,Object>> condicionesClimaticas
-~ LocalDateTime ultimaConsultaDelCLima
+- LocalDateTime ultimaConsultaDelCLima
 + {static} AccuWeather getInstance()
 + Integer getProbabilidadDePrecipitacionesActual(String)
 + Integer getTemperaturaCelciusActual(String)
@@ -19,14 +18,10 @@ class dominio.usuario.GeneradorSugerencias {
 + Atuendo generarSugerenciaSegunClimaActual(String,List<Prenda>)
 }
 interface dominio.clima.ServicioClima {
-~ Integer getProbabilidadDePrecipitacionesActual(String)
-~ Integer getTemperaturaCelciusActual(String)
+Integer getProbabilidadDePrecipitacionesActual(String)
+Integer getTemperaturaCelciusActual(String)
 }
 class dominio.ropa.Prenda {
-- TipoMaterial tipoMaterial
-- Trama trama
-- Color colorPrincipal
-- Color colorSecundario
 + Boolean esAdecuadaPara(Integer)
 }
 class dominio.ropa.Atuendo {
@@ -36,23 +31,20 @@ class dominio.ropa.Atuendo {
 - List<Prenda> accesorios
 }
 enum dominio.ropa.TipoPrenda {
-- CategoriaPrenda categoria
 - Integer temperaturaMaximaDeUso
-+ CategoriaPrenda getCategoria(){
-+ Integer getTemperaturaMaximaDeUso()
 + Boolean esAdecuadaPara(Integer temperaturaActual)
 }
 
-dominio.ropa.TipoPrenda <--left dominio.ropa.Prenda
+dominio.ropa.TipoPrenda <--right dominio.ropa.Prenda: tipo
 
-dominio.ropa.Prenda <-- dominio.ropa.Atuendo
-dominio.ropa.Prenda <-- dominio.ropa.Atuendo
-dominio.ropa.Prenda <-- dominio.ropa.Atuendo
-dominio.ropa.Prenda <-- dominio.ropa.Atuendo
+dominio.ropa.Prenda "*" <--right dominio.ropa.Atuendo
+dominio.ropa.Prenda "*" <-- dominio.ropa.Atuendo
+dominio.ropa.Prenda "*" <-- dominio.ropa.Atuendo
+dominio.ropa.Prenda "*" <-- dominio.ropa.Atuendo
 
 dominio.ropa.Prenda "*" <-- dominio.usuario.Usuario: guardarropas
 dominio.ropa.Atuendo "*" <-- dominio.usuario.Usuario: sugerencias
-dominio.usuario.GeneradorSugerencias <--left dominio.usuario.Usuario: generadorSugerencias
+dominio.usuario.GeneradorSugerencias <--right dominio.usuario.Usuario: generadorSugerencias
 dominio.clima.ServicioClima <--up dominio.usuario.Usuario: servicioClima
 dominio.clima.ServicioClima <--up dominio.usuario.GeneradorSugerencias: servicioClima
 dominio.ropa.Atuendo <.. dominio.usuario.GeneradorSugerencias
