@@ -8,28 +8,31 @@
 
 ## Explicacion
 
-* 
+* Para que el Usuario pueda conocer las condiciones climaticas, se le agregó un metodo para consultar 
+  contra el ServicioClima directamente. Se podría consultar contra el GeneradorSugerencias, pero solo serviría para 
+  volver a delegar el mensaje en el ServicioClima. Además de que semánticamente no tendria mucho sentido.
 
 
-
-
-* La clase "BorradorDePrendas" estaría representando un builder para configurar "Prenda". Esto permite utilizar una 
-  instancia de "BorradorDePrendas" como un borrador para despues continuar configurando una prenda. 
-  Antes de generar una "Prenda", el "GeneradorDePrendas" se encarga de validar lo ingresado.
-
-
-* Se agregó la abstraccion "Uniforme" con 3 atributos tipo "Prenda".
-
-
-* Se agregó la abstraccion "Usuario" con una lista "Sugerencias" de tipo "Uniforme" y un metodo para agregar Uniformes
-  para tratarlos como sugerencias recibidas.
-
-
-* El metodo "crearUniforme()" de la clase "Institucion" estaría representando un factory method. 
-  Los hook method se implementan en las subclases "ColegioSanJuan" e "InstitutoJohnson". Esto permite agregar 
-  nuevas Instituciones para configurar diferentes Uniformes a futuro. Esto permite que el sistema sea más extensible. 
-  Además de que permite no repetir logica al tener los metodos comunes en la superclase abstracta.
+* Para que se puedan recibir las sugerencias, se agregó la clase Atuendos con 4 listas, una para cada categoria de 
+  prenda, lo cual permite que se le puedan agregar más prendas a futuro sin problemas, lo cual hace que la solucion 
+  sea un poco más extensible.
   
+
+* Para que cada prenda tenga especificada su temperatura maxima soportable, se agregó el atributo 
+  "temperaturaMaximaDeUso" a cada TipoPrenda, lo cual permite tratarlas de manera polimórfica.
+  
+
+* Para poder configurar fácilmente diferentes servicios de obtención del clima se generó una interfaz "ServicioClima", 
+  para que la clase que lo implemente se encargue de tener la logica necesaria para obtener el clima de un determinado 
+  proveedor. Esto permite agregar otra implementacion para otro proveedor facilmente. Ya que la implementacion 
+  especifica para obtener el clima no estaría acoplada al resto de nuestro sistema. Y además que nuestro sistema 
+  siempre va a consultar contra la misma interfaz, sin importar de que proveedor de clima se tratase.
+  
+
+* Para evitar costos adicionales, se decidio cachear los datos provistos por el ServicioClima para realizar la minima 
+  cantidad de consultas.
+  
+
 
 ## Diagrama de clases - SOLUCION COMPLETA
 
