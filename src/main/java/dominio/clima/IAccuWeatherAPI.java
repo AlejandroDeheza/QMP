@@ -1,4 +1,4 @@
-package ropa;
+package dominio.clima;
 
 import java.util.List;
 import java.util.Map;

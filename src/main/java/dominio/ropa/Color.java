@@ -1,4 +1,4 @@
-package ropa;
+package dominio.ropa;
 
 public class Color {
 

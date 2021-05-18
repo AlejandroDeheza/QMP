@@ -1,4 +1,6 @@
-package ropa;
+package dominio.uniforme;
+
+import dominio.ropa.Prenda;
 
 public class Uniforme {
 

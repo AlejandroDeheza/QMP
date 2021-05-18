@@ -1,4 +1,4 @@
-package ropa;
+package dominio.ropa;
 
 import excepciones.PrendaInvalidaException;
 

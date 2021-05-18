@@ -1,4 +1,8 @@
-package ropa;
+package dominio.usuario;
+
+import dominio.clima.ServicioClima;
+import dominio.ropa.Atuendo;
+import dominio.ropa.Prenda;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,4 +1,4 @@
-package ropa;
+package dominio.clima;
 
 public interface ServicioClima {
 

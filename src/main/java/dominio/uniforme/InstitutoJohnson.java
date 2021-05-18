@@ -1,4 +1,6 @@
-package ropa;
+package dominio.uniforme;
+
+import dominio.ropa.*;
 
 public class InstitutoJohnson extends Institucion{
 
