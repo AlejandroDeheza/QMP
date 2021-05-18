@@ -26,7 +26,6 @@ interface dominio.clima.ServicioClima {
 ~ Integer getTemperaturaCelciusActual(String)
 }
 class dominio.ropa.Prenda {
-- TipoPrenda tipo
 - TipoMaterial tipoMaterial
 - Trama trama
 - Color colorPrincipal
@@ -39,6 +38,15 @@ class dominio.ropa.Atuendo {
 - List<Prenda> calzados
 - List<Prenda> accesorios
 }
+enum dominio.ropa.TipoPrenda {
+- CategoriaPrenda categoria
+- Integer temperaturaMaximaDeUso
++ CategoriaPrenda getCategoria(){
++ Integer getTemperaturaMaximaDeUso()
++ Boolean esAdecuadaPara(Integer temperaturaActual)
+}
+
+dominio.ropa.TipoPrenda <--left dominio.ropa.Prenda
 
 dominio.ropa.Prenda <-- dominio.ropa.Atuendo
 dominio.ropa.Prenda <-- dominio.ropa.Atuendo

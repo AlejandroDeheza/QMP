@@ -71,6 +71,16 @@ class dominio.ropa.Atuendo {
 - List<Prenda> accesorios
 }
 
+enum dominio.ropa.TipoPrenda {
+- CategoriaPrenda categoria
+- Integer temperaturaMaximaDeUso
++ CategoriaPrenda getCategoria(){
++ Integer getTemperaturaMaximaDeUso()
++ Boolean esAdecuadaPara(Integer temperaturaActual)
+}
+
+dominio.ropa.TipoPrenda <--down dominio.ropa.Prenda
+
 dominio.uniforme.Institucion <|-- dominio.uniforme.InstitutoJohnson
 dominio.uniforme.Institucion <|-- dominio.uniforme.ColegioSanJuan
 dominio.ropa.Prenda <-- dominio.uniforme.Uniforme
@@ -87,10 +97,10 @@ dominio.ropa.Prenda <..right dominio.ropa.BorradorDePrendas
 
 dominio.ropa.Prenda "*" <-- dominio.usuario.Usuario: guardarropas
 dominio.ropa.Atuendo "*" <-- dominio.usuario.Usuario: sugerencias
-dominio.usuario.GeneradorSugerencias <-- dominio.usuario.Usuario: generadorSugerencias
-dominio.clima.ServicioClima <--left dominio.usuario.Usuario: servicioClima
-dominio.clima.ServicioClima <-- dominio.usuario.GeneradorSugerencias: servicioClima
-dominio.clima.IAccuWeatherAPI <..right dominio.clima.ServicioClima
+dominio.usuario.GeneradorSugerencias <--left dominio.usuario.Usuario: generadorSugerencias
+dominio.clima.ServicioClima <--up dominio.usuario.Usuario: servicioClima
+dominio.clima.ServicioClima <--up dominio.usuario.GeneradorSugerencias: servicioClima
+dominio.clima.IAccuWeatherAPI <..left dominio.clima.ServicioClima
 dominio.ropa.Atuendo <.. dominio.usuario.GeneradorSugerencias
 dominio.ropa.Prenda <.. dominio.usuario.GeneradorSugerencias
 
