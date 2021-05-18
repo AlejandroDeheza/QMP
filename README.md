@@ -23,14 +23,15 @@
   
 
 * Para poder configurar fácilmente diferentes servicios de obtención del clima se generó una interfaz "ServicioClima", 
-  para que la clase que lo implemente se encargue de tener la logica necesaria para obtener el clima de un determinado 
-  proveedor. Esto permite agregar otra implementacion para otro proveedor facilmente. Ya que la implementacion 
-  especifica para obtener el clima no estaría acoplada al resto de nuestro sistema. Y además que nuestro sistema 
+  para que las clases que lo implementen se encarguen de tener la logica necesaria para obtener el clima de un 
+  determinado proveedor. Esto permite agregar otra implementacion (en otra clase que implemente "ServicioClima") para 
+  otro proveedor manteniendo la misma interfaz. De esta forma, la implementacion especifica para obtener el clima 
+  no estaría acoplada al resto de nuestro sistema, lo que favorece la extensibilidad. Y además que nuestro sistema 
   siempre va a consultar contra la misma interfaz, sin importar de que proveedor de clima se tratase.
   
 
 * Para evitar costos adicionales, se decidio cachear los datos provistos por el ServicioClima para realizar la minima 
-  cantidad de consultas.
+  cantidad de consultas necesarias.
   
 
 
