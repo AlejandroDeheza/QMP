@@ -1,0 +1,99 @@
+@startuml
+abstract class dominio.uniforme.Institucion {
++ Uniforme crearUniforme()
+# {abstract}Prenda generarParteSuperior()
+# {abstract}Prenda generarParteInferior()
+# {abstract}Prenda generarCalzado()
+}
+class dominio.clima.AccuWeatherAPI {
++ List<Map<String,Object>> getWeather(String)
+}
+interface dominio.clima.IAccuWeatherAPI {
+~ List<Map<String,Object>> getWeather(String)
+}
+class dominio.uniforme.InstitutoJohnson {
+# Prenda generarParteSuperior()
+# Prenda generarParteInferior()
+# Prenda generarCalzado()
+}
+class dominio.usuario.Usuario {
++ Integer getTemperaturaCelciusActual(String)
++ void agregarSugerencia(Atuendo)
++ void pedirSugerenciaSegunClimaActual(String)
++ void agregarSugerenciaUniforme(Uniforme)
+}
+class dominio.ropa.BorradorDePrendas {
+- TipoPrenda tipoPrenda
+- TipoMaterial tipoMaterial
+- Trama trama
+- Color colorPrincipal
+- Color colorSecundario
++ BorradorDePrendas setTipoMaterial(TipoMaterial)
++ BorradorDePrendas setTrama(Trama)
++ BorradorDePrendas setColorPrincipal(Color)
++ BorradorDePrendas setColorSecundario(Color)
++ CategoriaPrenda identificarCategoria()
++ Prenda generarPrenda()
+}
+class dominio.clima.AccuWeather {
+- List<Map<String,Object>> condicionesClimaticas
+~ LocalDateTime ultimaConsultaDelCLima
++ {static} AccuWeather getInstance()
++ Integer getProbabilidadDePrecipitacionesActual(String)
++ Integer getTemperaturaCelciusActual(String)
+}
+class dominio.uniforme.ColegioSanJuan {
+# Prenda generarParteSuperior()
+# Prenda generarParteInferior()
+# Prenda generarCalzado()
+}
+class dominio.usuario.GeneradorSugerencias {
++ Atuendo generarSugerenciaSegunClimaActual(String,List<Prenda>)
+}
+interface dominio.clima.ServicioClima {
+~ Integer getProbabilidadDePrecipitacionesActual(String)
+~ Integer getTemperaturaCelciusActual(String)
+}
+class dominio.uniforme.Uniforme {
+}
+class dominio.ropa.Prenda {
+- TipoPrenda tipo
+- TipoMaterial tipoMaterial
+- Trama trama
+- Color colorPrincipal
+- Color colorSecundario
++ Boolean esAdecuadaPara(Integer)
+}
+class dominio.ropa.Atuendo {
+- List<Prenda> prendaSuperiores
+- List<Prenda> prendaInferiores
+- List<Prenda> calzados
+- List<Prenda> accesorios
+}
+
+dominio.uniforme.Institucion <|-- dominio.uniforme.InstitutoJohnson
+dominio.uniforme.Institucion <|-- dominio.uniforme.ColegioSanJuan
+dominio.ropa.Prenda <-- dominio.uniforme.Uniforme
+dominio.ropa.Prenda <-- dominio.uniforme.Uniforme
+dominio.ropa.Prenda <-- dominio.uniforme.Uniforme
+dominio.ropa.Prenda <--left dominio.ropa.Atuendo
+dominio.ropa.Prenda <-- dominio.ropa.Atuendo
+dominio.ropa.Prenda <-- dominio.ropa.Atuendo
+dominio.ropa.Prenda <-- dominio.ropa.Atuendo
+dominio.uniforme.Uniforme "*" <-- dominio.usuario.Usuario: sugerenciasUniformes
+dominio.uniforme.Uniforme <.. dominio.uniforme.Institucion
+dominio.ropa.BorradorDePrendas <.. dominio.uniforme.Institucion
+dominio.ropa.Prenda <..right dominio.ropa.BorradorDePrendas
+
+dominio.ropa.Prenda "*" <-- dominio.usuario.Usuario: guardarropas
+dominio.ropa.Atuendo "*" <-- dominio.usuario.Usuario: sugerencias
+dominio.usuario.GeneradorSugerencias <-- dominio.usuario.Usuario: generadorSugerencias
+dominio.clima.ServicioClima <--left dominio.usuario.Usuario: servicioClima
+dominio.clima.ServicioClima <-- dominio.usuario.GeneradorSugerencias: servicioClima
+dominio.clima.IAccuWeatherAPI <..right dominio.clima.ServicioClima
+dominio.ropa.Atuendo <.. dominio.usuario.GeneradorSugerencias
+dominio.ropa.Prenda <.. dominio.usuario.GeneradorSugerencias
+
+dominio.clima.IAccuWeatherAPI <|.. dominio.clima.AccuWeatherAPI
+dominio.clima.ServicioClima <|.. dominio.clima.AccuWeather
+@enduml

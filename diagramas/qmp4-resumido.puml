@@ -1,0 +1,60 @@
+@startuml
+class dominio.clima.AccuWeatherAPI {
++ List<Map<String,Object>> getWeather(String)
+}
+interface dominio.clima.IAccuWeatherAPI {
+~ List<Map<String,Object>> getWeather(String)
+}
+class dominio.usuario.Usuario {
++ Integer getTemperaturaCelciusActual(String)
++ void agregarSugerencia(Atuendo)
++ void pedirSugerenciaSegunClimaActual(String)
++ void agregarSugerenciaUniforme(Uniforme)
+}
+class dominio.clima.AccuWeather {
+- List<Map<String,Object>> condicionesClimaticas
+~ LocalDateTime ultimaConsultaDelCLima
++ {static} AccuWeather getInstance()
++ Integer getProbabilidadDePrecipitacionesActual(String)
++ Integer getTemperaturaCelciusActual(String)
+}
+class dominio.usuario.GeneradorSugerencias {
++ Atuendo generarSugerenciaSegunClimaActual(String,List<Prenda>)
+}
+interface dominio.clima.ServicioClima {
+~ Integer getProbabilidadDePrecipitacionesActual(String)
+~ Integer getTemperaturaCelciusActual(String)
+}
+class dominio.ropa.Prenda {
+- TipoPrenda tipo
+- TipoMaterial tipoMaterial
+- Trama trama
+- Color colorPrincipal
+- Color colorSecundario
++ Boolean esAdecuadaPara(Integer)
+}
+class dominio.ropa.Atuendo {
+- List<Prenda> prendaSuperiores
+- List<Prenda> prendaInferiores
+- List<Prenda> calzados
+- List<Prenda> accesorios
+}
+
+dominio.ropa.Prenda <-- dominio.ropa.Atuendo
+dominio.ropa.Prenda <-- dominio.ropa.Atuendo
+dominio.ropa.Prenda <-- dominio.ropa.Atuendo
+dominio.ropa.Prenda <-- dominio.ropa.Atuendo
+
+dominio.ropa.Prenda "*" <-- dominio.usuario.Usuario: guardarropas
+dominio.ropa.Atuendo "*" <-- dominio.usuario.Usuario: sugerencias
+dominio.usuario.GeneradorSugerencias <--left dominio.usuario.Usuario: generadorSugerencias
+dominio.clima.ServicioClima <--up dominio.usuario.Usuario: servicioClima
+dominio.clima.ServicioClima <--up dominio.usuario.GeneradorSugerencias: servicioClima
+dominio.clima.IAccuWeatherAPI <..right dominio.clima.ServicioClima
+dominio.ropa.Atuendo <.. dominio.usuario.GeneradorSugerencias
+dominio.ropa.Prenda <.. dominio.usuario.GeneradorSugerencias
+
+dominio.clima.IAccuWeatherAPI <|.. dominio.clima.AccuWeatherAPI
+dominio.clima.ServicioClima <|.. dominio.clima.AccuWeather
+
+@enduml

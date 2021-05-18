@@ -12,15 +12,15 @@ public class Usuario {
   private final List<Prenda> guardarropas;
   private final List<Atuendo> sugerencias;
   private final List<Uniforme> sugerenciasUniformes;
-  private final GeneradorSugerencias generador;
+  private final GeneradorSugerencias generadorSugerencias;
   private final ServicioClima servicioClima;
 
   public Usuario(List<Prenda> guardarropas, List<Atuendo> sugerencias, List<Uniforme> sugerenciasUniformes,
-                 GeneradorSugerencias generador, ServicioClima servicioClima) {
+                 GeneradorSugerencias generadorSugerencias, ServicioClima servicioClima) {
     this.guardarropas = guardarropas;
     this.sugerencias = sugerencias;
     this.sugerenciasUniformes = sugerenciasUniformes;
-    this.generador = generador;
+    this.generadorSugerencias = generadorSugerencias;
     this.servicioClima = servicioClima;
   }
 
@@ -33,7 +33,7 @@ public class Usuario {
   }
 
   public void pedirSugerenciaSegunClimaActual(String ciudad) {
-    agregarSugerencia(generador.generarSugerenciaSegunClimaActual(ciudad, guardarropas));
+    agregarSugerencia(generadorSugerencias.generarSugerenciaSegunClimaActual(ciudad, guardarropas));
   }
 
 
