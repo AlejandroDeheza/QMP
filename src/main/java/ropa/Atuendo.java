@@ -4,13 +4,33 @@ import java.util.List;
 
 public class Atuendo {
 
-  private List<Prenda> prendas;
+  private final List<Prenda> prendaSuperiores;
+  private final List<Prenda> prendaInferiores;
+  private final List<Prenda> calzados;
+  private final List<Prenda> accesorios;
 
-  public List<Prenda> getPrendas() {
-    return prendas;
+  public Atuendo(List<Prenda> prendaSuperiores, List<Prenda> prendaInferiores, List<Prenda> calzados,
+                 List<Prenda> accesorios) {
+    this.prendaSuperiores = prendaSuperiores;
+    this.prendaInferiores = prendaInferiores;
+    this.calzados = calzados;
+    this.accesorios = accesorios;
   }
 
-  public void setPrendas(List<Prenda> prendas) {
-    this.prendas = prendas;
+  public List<Prenda> getPrendaSuperiores() {
+    return prendaSuperiores;
   }
+
+  public List<Prenda> getPrendaInferiores() {
+    return prendaInferiores;
+  }
+
+  public List<Prenda> getCalzados() {
+    return calzados;
+  }
+
+  public List<Prenda> getAccesorios() {
+    return accesorios;
+  }
+
 }

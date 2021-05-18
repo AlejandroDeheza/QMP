@@ -58,14 +58,14 @@ class Usuario {
   private List<Atuendo> sugerencias = new ArrayList();
   private GeneradorSugerencias generador;
   private ServicioClima servicioClima;
-  private List<Prendas> guardarropas;
+  private List<Prenda> guardarropas;
 
   public Usuario(GeneradorSugerencias generador, ServicioClima servicioClima) {
     this.generador = generador;
     this.servicioClima = servicioClima;
   }
   
-  public Integer getTemperaturaCelcius(String ciudad) {
+  public Integer getTemperaturaCelciusActual(String ciudad) {
     return servicioClima.getTemperaturaCelciusActual(ciudad);
   }
   
@@ -73,8 +73,8 @@ class Usuario {
     sugerencias.add(sugerencia);
   }
   
-  public void pedirSugerenciaSegunClima(String ciudad) {
-    agregarSugerencia(generador.generarSugerenciaSegunClima(ciudad, guardarropas));
+  public void pedirSugerenciaSegunClimaActual(String ciudad) {
+    agregarSugerencia(generador.generarSugerenciaSegunClimaActual(ciudad, guardarropas));
   }
 
 }
@@ -97,7 +97,7 @@ class GeneradorSugerencias {
 
   public Atuendo generarSugerenciaSegunClimaActual(String ciudad, List<Prenda> prendas) {
   
-    Integer temperaturaActual = servicioClima.getTemperaturaCelciusActual(String ciudad);
+    Integer temperaturaActual = servicioClima.getTemperaturaCelciusActual(ciudad);
     prendasAdecuadas = prendas.filter(prenda -> prenda.esAdecuadaPara(temperaturaActual));
     return generarAtuendo(prendasAdecuadas);
   }
@@ -161,16 +161,16 @@ class AccuWeather implements ServicioClima {
 
   
   public Integer getProbabilidadDePrecipitacionesActual(String ciudad) {
-    validarUltimaConsulta() //logica repetida, no creo que valga la pena arreglarlo
+    validarUltimaConsulta(ciudad) //logica repetida, no creo que valga la pena arreglarlo
     return condicionesClimaticas.get(0).get("PrecipitationProbability"); //Devuelve un número del 0 al 1
   }
   
   public Integer getTemperaturaCelciusActual(String ciudad) {
-    validarUltimaConsulta() //logica repetida, no creo que valga la pena arreglarlo
+    validarUltimaConsulta(ciudad) //logica repetida, no creo que valga la pena arreglarlo
     return pasarACelcius(condicionesClimaticas.get(0).get("Temperature").get("Value"));
   }
   
-  private void validarUltimaConsulta() {
+  private void validarUltimaConsulta(String ciudad) {
     if (seConsultoClimaHaceMasDe(12 horas)) {
       AccuWeatherAPI apiClima = new AccuWeatherAPI();
       condicionesClimaticas = apiClima.getWeather(ciudad);
@@ -179,7 +179,7 @@ class AccuWeather implements ServicioClima {
   }
   
   private Boolean seConsultoClimaHaceMasDe(periodo) {
-    return (LocalDateTime.now() - ultimaConsultaDelCLima) > periodo //TODO
+    return (LocalDateTime.now() - ultimaConsultaDelCLima) >= periodo //TODO
   }
   
   private Integer pasarACelcius(Integer fahrenheit) {
