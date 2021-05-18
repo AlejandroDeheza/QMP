@@ -2,7 +2,7 @@ package dominio.clima;
 
 import java.util.*;
 
-public final class AccuWeatherAPI implements IAccuWeatherAPI{
+public final class AccuWeatherAPI implements IAccuWeatherAPI {
 
   @Override
   public final List<Map<String, Object>> getWeather(String ciudad) {

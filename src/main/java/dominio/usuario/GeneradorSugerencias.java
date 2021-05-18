@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class GeneradorSugerencias {
 
-  private ServicioClima servicioClima;
+  private final ServicioClima servicioClima;
 
   public GeneradorSugerencias(ServicioClima servicioClima) {
     this.servicioClima = servicioClima;
@@ -24,6 +24,8 @@ public class GeneradorSugerencias {
   }
 
   private Atuendo generarAtuendo(List<Prenda> prendas) {
-    return new Atuendo(null, null, null, null); //TODO
+    return new Atuendo(
+        null, null, null, null
+    ); //TODO
   }
 }

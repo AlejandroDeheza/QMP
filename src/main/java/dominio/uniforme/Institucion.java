@@ -9,7 +9,9 @@ public abstract class Institucion {
   }
 
   protected abstract Prenda generarParteSuperior();
+
   protected abstract Prenda generarParteInferior();
+
   protected abstract Prenda generarCalzado();
 
 }

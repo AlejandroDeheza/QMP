@@ -2,13 +2,13 @@ package dominio.ropa;
 
 public class Prenda {
 
-  private TipoPrenda tipo;
-  private TipoMaterial tipoMaterial;
-  private Trama trama;
-  private Color colorPrincipal;
-  private Color colorSecundario;
+  private final TipoPrenda tipo;
+  private final TipoMaterial tipoMaterial;
+  private final Trama trama;
+  private final Color colorPrincipal;
+  private final Color colorSecundario;
 
-  public Prenda(TipoPrenda tipo, TipoMaterial tipoMaterial, Trama trama, Color colorPrincipal, Color colorSecundario){
+  public Prenda(TipoPrenda tipo, TipoMaterial tipoMaterial, Trama trama, Color colorPrincipal, Color colorSecundario) {
     this.tipo = tipo;
     this.tipoMaterial = tipoMaterial;
     this.trama = trama;

@@ -17,7 +17,8 @@ public class AccuWeather implements ServicioClima {
   private static AccuWeather INSTANCE;
 
   //usariamos el constructor solo para tests
-  public AccuWeather() { }
+  public AccuWeather() {
+  }
 
   //usariamos el getInstance en el codigo
   public static AccuWeather getInstance() {

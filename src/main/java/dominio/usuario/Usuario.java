@@ -9,11 +9,11 @@ import java.util.List;
 
 public class Usuario {
 
-  private List<Prenda> guardarropas;
+  private final List<Prenda> guardarropas;
   private final List<Atuendo> sugerencias;
   private final List<Uniforme> sugerenciasUniformes;
-  private GeneradorSugerencias generador;
-  private ServicioClima servicioClima;
+  private final GeneradorSugerencias generador;
+  private final ServicioClima servicioClima;
 
   public Usuario(List<Prenda> guardarropas, List<Atuendo> sugerencias, List<Uniforme> sugerenciasUniformes,
                  GeneradorSugerencias generador, ServicioClima servicioClima) {
@@ -28,7 +28,7 @@ public class Usuario {
     return servicioClima.getTemperaturaCelciusActual(ciudad);
   }
 
-  public void agregarSugerencia(Atuendo sugerencia){
+  public void agregarSugerencia(Atuendo sugerencia) {
     sugerencias.add(sugerencia);
   }
 
@@ -37,8 +37,7 @@ public class Usuario {
   }
 
 
-
-  public void agregarSugerenciaUniforme(Uniforme sugerencia){
+  public void agregarSugerenciaUniforme(Uniforme sugerencia) {
     sugerenciasUniformes.add(sugerencia);
   }
 }

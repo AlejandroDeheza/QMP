@@ -15,23 +15,23 @@ public enum TipoPrenda {
   BERMUDA(CategoriaPrenda.PARTE_INFERIOR, 50),
   PANTALON(CategoriaPrenda.PARTE_INFERIOR, 37);
 
-  private CategoriaPrenda categoria;
-  private Integer temperaturaMaximaDeUso;
+  private final CategoriaPrenda categoria;
+  private final Integer temperaturaMaximaDeUso;
 
-  TipoPrenda(CategoriaPrenda categoria, Integer temperaturaMaximaDeUso){
+  TipoPrenda(CategoriaPrenda categoria, Integer temperaturaMaximaDeUso) {
     this.categoria = categoria;
     this.temperaturaMaximaDeUso = temperaturaMaximaDeUso;
   }
 
-  public CategoriaPrenda getCategoria(){
+  public CategoriaPrenda getCategoria() {
     return this.categoria;
   }
 
-  public Integer getTemperaturaMaximaDeUso(){
+  public Integer getTemperaturaMaximaDeUso() {
     return this.temperaturaMaximaDeUso;
   }
 
-  public Boolean esAdecuadaPara(Integer temperaturaActual){
+  public Boolean esAdecuadaPara(Integer temperaturaActual) {
     return this.temperaturaMaximaDeUso >= temperaturaActual;
   }
 }
