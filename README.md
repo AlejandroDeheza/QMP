@@ -3,7 +3,7 @@
 ## Diagrama de clases - REQUERIMIENTOS DE ESTA ITERACION
 
 <p align="center"> 
-<img src="diagramas/QMP5-resumido.png">
+<img src="diagramas/qmp5.png">
 </p>
 
 
