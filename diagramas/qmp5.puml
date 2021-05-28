@@ -29,14 +29,14 @@ class Usuario {
 + void deshacerPropuesta(PropuestaGuardarropa propuesta)
 }
 
-Prenda "*" <-- Guardarropa: prendas
-PropuestaGuardarropa <|..up AgregarPrenda
-PropuestaGuardarropa <|..up QuitarPrenda
-Guardarropa <-- AgregarPrenda: guardarropa
-Prenda <-- AgregarPrenda: prenda
-Guardarropa <-- QuitarPrenda: guardarropa
-Prenda <-- QuitarPrenda: prenda
-Guardarropa "*" <-- Usuario: guardarropas
-PropuestaGuardarropa "*" <--up Usuario: propuestas
+Prenda "*" <--up Guardarropa: prendas
+PropuestaGuardarropa <|.. AgregarPrenda
+PropuestaGuardarropa <|.. QuitarPrenda
+Guardarropa <--up AgregarPrenda: guardarropa
+Prenda <--up AgregarPrenda: prenda
+Guardarropa <--up QuitarPrenda: guardarropa
+Prenda <--up QuitarPrenda: prenda
+Guardarropa "*" <--up Usuario: guardarropas
+PropuestaGuardarropa "*" <-- Usuario: propuestas
 
 @enduml
