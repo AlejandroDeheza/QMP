@@ -28,7 +28,7 @@ class Guardarropa {
   private Set<Prenda> calzados;
   private Set<Prenda> accesorios;
 
-  public List<Atuendo> generarSugerencia() {
+  public List<Atuendo> generarSugerencias() {
     return Sets
         .cartesianProduct(prendasSuperiores, prendasInferiores, calzados, accesorios)
         .stream()
