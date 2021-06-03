@@ -55,20 +55,20 @@ class Prenda {
 + Boolean sePuedeSugerir()
 }
 
-Prenda <-down- Atuendo : prendaSuperior
-Prenda <-- Atuendo : prendaInferior
-Prenda <-- Atuendo : calzado
-Prenda <-- Atuendo : accesorio
+Prenda <-left- Atuendo : prendaSuperior
+Prenda <-left- Atuendo : prendaInferior
+Prenda <-left- Atuendo : calzado
+Prenda <-left- Atuendo : accesorio
 
 Prenda "*" <-right- Guardarropa : prendasSuperiores
 Prenda "*" <-- Guardarropa : prendasInferiores
 Prenda "*" <-- Guardarropa : calzados
 Prenda "*" <-- Guardarropa : accesorios
 
-EstadoPrenda <-down- Prenda : estado
+EstadoPrenda <-up- Prenda : estado
 
-EstadoPrenda <|.up. Limpia
-EstadoPrenda <|.up. Sucia
-EstadoPrenda <|.up. Percutida
-EstadoPrenda <|.up. Lavandose
+EstadoPrenda <|.. Limpia
+EstadoPrenda <|.. Sucia
+EstadoPrenda <|.. Percutida
+EstadoPrenda <|.. Lavandose
 @enduml
