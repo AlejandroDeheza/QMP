@@ -61,9 +61,11 @@ Prenda <-left- Atuendo : calzado
 Prenda <-left- Atuendo : accesorio
 
 Prenda "*" <-right- Guardarropa : prendasSuperiores
-Prenda "*" <-- Guardarropa : prendasInferiores
-Prenda "*" <-- Guardarropa : calzados
-Prenda "*" <-- Guardarropa : accesorios
+Prenda "*" <-right- Guardarropa : prendasInferiores
+Prenda "*" <-right- Guardarropa : calzados
+Prenda "*" <-right- Guardarropa : accesorios
+
+Atuendo <.right. Guardarropa
 
 EstadoPrenda <-up- Prenda : estado
 
