@@ -10,9 +10,9 @@
 
 * Faltan tests
 
-* El RepositorioClima se usa para guardar las referencias a los datos del clima cacheados, asi 
-  cualquier ServicioMeteorologico puede hacceder a esos datos. Se guardan objetos de nustro sistema (EstadoDelTiempo) 
-  en vez de guardarlos con la estructura que provee AccuWeatherAPI.
+* El RepositorioClima se usa para guardar los datos del clima cacheados, asi cualquier ServicioMeteorologico puede 
+  acceder a esos datos. Se guardan objetos de nustro sistema (EstadoDelTiempo) en vez de guardarlos con la estructura 
+  que provee AccuWeatherAPI.
   
   Otras opcion: dejar a AccuWeather con los datos del clima que genera (convirtiendolo en singleton) 
   en ves de usar el RepositorioClima.
