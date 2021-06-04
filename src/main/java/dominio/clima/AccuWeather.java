@@ -1,60 +1,57 @@
 package dominio.clima;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.HOURS;
+public class AccuWeather implements ServicioMeteorologico {
 
-public class AccuWeather implements ServicioClima {
+  private AccuWeatherAPI apiClima;
+  private RepositorioClima repositorioClima;
+  private Long periodoDeActualizacion = 12L;
 
-  private List<Map<String, Object>> condicionesClimaticas;
-  private LocalDateTime ultimaConsultaDelCLima = LocalDateTime.now().minus(DAYS.getDuration());
-
-
-  private static AccuWeather INSTANCE;
-
-  //usariamos el constructor solo para tests
-  public AccuWeather() {
-  }
-
-  //usariamos el getInstance en el codigo
-  public static AccuWeather getInstance() {
-    if (INSTANCE == null) {
-      INSTANCE = new AccuWeather();
-    }
-    return INSTANCE;
+  public AccuWeather(AccuWeatherAPI apiClima, RepositorioClima repositorioClima) {
+    this.apiClima = apiClima;
+    this.repositorioClima = repositorioClima;
   }
 
   @Override
-  public Integer getProbabilidadDePrecipitacionesActual(String ciudad) {
-    validarUltimaConsulta(ciudad); //logica repetida, no creo que valga la pena arreglarlo
-    return (Integer) condicionesClimaticas.get(0).get("PrecipitationProbability"); //Devuelve un número del 0 al 1
-  }
-
-  @Override
-  public Integer getTemperaturaCelciusActual(String ciudad) {
-    validarUltimaConsulta(ciudad); //logica repetida, no creo que valga la pena arreglarlo
-    return pasarACelcius(
-        (Integer) ((HashMap<String, Object>) condicionesClimaticas.get(0).get("Temperature")).get("Value"));
+  public EstadoDelClima obtenerCondicionesClimaticas(String ciudad) {
+    validarUltimaConsulta(ciudad);
+    return repositorioClima.getCondicionClimatica(ciudad);
   }
 
   private void validarUltimaConsulta(String ciudad) {
-    if (seConsultoClimaHaceMasDe(12L)) {
-      AccuWeatherAPI apiClima = new AccuWeatherAPI();
-      condicionesClimaticas = apiClima.getWeather(ciudad);
-      ultimaConsultaDelCLima = LocalDateTime.now();
+    if (repositorioClima.climaEstaDesactualizado(ciudad, periodoDeActualizacion)) {
+      repositorioClima.setCondicionesClimaticas(
+          ciudad,
+          LocalDateTime.now(),
+          consultarApi(ciudad)
+      );
     }
   }
 
-  private Boolean seConsultoClimaHaceMasDe(Long periodo) {
-    return HOURS.between(LocalDateTime.now(), ultimaConsultaDelCLima) >= periodo;
+  //devuelve una lista con 12 elementos, uno por cada hora (AccuWeatherAPI devuelve el pronostico de 12 horas)
+  private List<EstadoDelClima> consultarApi(String ciudad) {
+    return apiClima
+        .getWeather(ciudad)
+        .stream()
+        .map(this::generarEstadoDelClima)
+        .collect(Collectors.toList());
   }
 
-  private Integer pasarACelcius(Integer fahrenheit) {
-    return 33;  //TODO
+  private EstadoDelClima generarEstadoDelClima(Map<String, Object> clima) {
+    return new EstadoDelClima(
+        (BigDecimal) clima.get("PrecipitationProbability"),
+        pasarACelcius((BigDecimal) ((HashMap<String, Object>) clima.get("Temperature")).get("Value"))
+        );
+  }
+
+  private BigDecimal pasarACelcius(BigDecimal fahrenheit) {
+    return (fahrenheit.subtract(new BigDecimal(32))).multiply(new BigDecimal(5/9));
   }
 
 }

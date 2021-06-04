@@ -1,23 +1,28 @@
 package dominio.ropa;
 
+import java.math.BigDecimal;
+
 public class Prenda {
 
-  private final TipoPrenda tipo;
-  private final TipoMaterial tipoMaterial;
-  private final Trama trama;
-  private final Color colorPrincipal;
-  private final Color colorSecundario;
+  private TipoPrenda tipo;
+  private TipoMaterial tipoMaterial;
+  private Trama trama;
+  private Color colorPrincipal;
+  private Color colorSecundario;
+  private BigDecimal temperaturaMaximaDeUso;
 
-  public Prenda(TipoPrenda tipo, TipoMaterial tipoMaterial, Trama trama, Color colorPrincipal, Color colorSecundario) {
+  public Prenda(TipoPrenda tipo, TipoMaterial tipoMaterial, Trama trama, Color colorPrincipal, Color colorSecundario,
+                BigDecimal temperaturaMaximaDeUso) {
     this.tipo = tipo;
     this.tipoMaterial = tipoMaterial;
     this.trama = trama;
     this.colorPrincipal = colorPrincipal;
     this.colorSecundario = colorSecundario;
+    this.temperaturaMaximaDeUso = temperaturaMaximaDeUso;
   }
 
-  public Boolean esAdecuadaPara(Integer temperatura) {
-    return getTipo().esAdecuadaPara(temperatura);
+  public Boolean esAdecuadaPara(BigDecimal temperaturaActual) {
+    return this.temperaturaMaximaDeUso.compareTo(temperaturaActual) >= 0;
   }
 
   //GETTERS

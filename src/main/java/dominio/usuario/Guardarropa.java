@@ -1,32 +1,27 @@
-package dominio.ropa;
+package dominio.usuario;
 
 import com.google.common.collect.Sets;
+import dominio.ropa.Atuendo;
+import dominio.ropa.Prenda;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-class Atuendo {
-
-  private Prenda prendaSuperior;
-  private Prenda prendaInferior;
-  private Prenda calzado;
-  private Prenda accesorio;
-
-  public Atuendo(Prenda prendaSuperior, Prenda prendaInferior, Prenda calzado, Prenda accesorio) {
-    this.prendaSuperior = prendaSuperior;
-    this.prendaInferior = prendaInferior;
-    this.calzado = calzado;
-    this.accesorio = accesorio;
-  }
-}
-
-class Guardarropa {
+public class Guardarropa {
 
   private Set<Prenda> prendasSuperiores;
   private Set<Prenda> prendasInferiores;
   private Set<Prenda> calzados;
   private Set<Prenda> accesorios;
+
+  Guardarropa(Set<Prenda> prendasSuperiores, Set<Prenda> prendasInferiores, Set<Prenda> calzados,
+              Set<Prenda> accesorios) {
+    this.prendasSuperiores = prendasSuperiores;
+    this.prendasInferiores = prendasInferiores;
+    this.calzados = calzados;
+    this.accesorios = accesorios;
+  }
 
   public List<Atuendo> generarSugerencias() {
     return Sets
@@ -35,6 +30,5 @@ class Guardarropa {
         .map((list) -> new Atuendo(list.get(0), list.get(1), list.get(2), list.get(3)))
         .collect(Collectors.toList());
   }
+
 }
-
-

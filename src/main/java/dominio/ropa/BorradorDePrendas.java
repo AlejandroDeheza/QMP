@@ -2,6 +2,8 @@ package dominio.ropa;
 
 import excepciones.PrendaInvalidaException;
 
+import java.math.BigDecimal;
+
 public class BorradorDePrendas {
 
   private final TipoPrenda tipoPrenda;
@@ -9,6 +11,7 @@ public class BorradorDePrendas {
   private Trama trama = Trama.LISA; //valor por defecto
   private Color colorPrincipal;
   private Color colorSecundario;
+  private BigDecimal temperaturaMaximaDeUso;
 
   public BorradorDePrendas(TipoPrenda tipoPrenda) {
     if (tipoPrenda == null)
@@ -44,13 +47,18 @@ public class BorradorDePrendas {
     return this;
   }
 
+  public BorradorDePrendas settemperaturaMaximaDeUso(BigDecimal temperaturaMaximaDeUso) {
+    this.temperaturaMaximaDeUso = temperaturaMaximaDeUso;
+    return this;
+  }
+
   public CategoriaPrenda identificarCategoria() {
     return tipoPrenda.getCategoria();
   }
 
   public Prenda generarPrenda() {
     validarPrenda();
-    return new Prenda(tipoPrenda, tipoMaterial, trama, colorPrincipal, colorSecundario);
+    return new Prenda(tipoPrenda, tipoMaterial, trama, colorPrincipal, colorSecundario, temperaturaMaximaDeUso);
   }
 
   private void validarPrenda() {

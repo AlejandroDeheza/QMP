@@ -1,207 +1,147 @@
-# QMP-Tercera-Iteracion-Opcional
+# QMP-Cuarta-Iteracion
 
 ## Diagrama de clases - REQUERIMIENTOS DE ESTA ITERACION
 
 <p align="center"> 
-<img src="diagramas/qmp3.png">
+<img src="diagramas/qmp4-rr.png">
 </p>
 
+## Notas
+
+* Faltan tests
+
+* El RepositorioClima se usa para guardar las referencias a los datos del clima cacheados, asi 
+  cualquier ServicioMeteorologico puede hacceder a esos datos. Se guardan objetos de nustro sistema (EstadoDelTiempo) 
+  en vez de guardarlos con la estructura que provee AccuWeatherAPI.
+  
+  Otras opcion: dejar a AccuWeather con los datos del clima que genera (convirtiendolo en singleton) 
+  en ves de usar el RepositorioClima.
+
+* Borre:
+~~~
+  public void agregarSugerenciaUniforme(Uniforme sugerencia) {
+  sugerenciasUniformes.add(sugerencia);
+  }
+~~~
+  Porque ahora las sugerencias ahora son de Atuendos en general. Deberia buscar alguna forma para que los Uniformes 
+  sean Atuendos. Capaz haciendo que herede de Atuendo, pero los Uniformes no tienen accesorios. Si no tambien podria 
+  hacer que los Atuendos y Uniformes herenden de otra clase y que las sugerencias tengas ese tipo.
 
 ## Pseudocodigo
 
 ~~~
 
-class Atuendo {
-
-  private Prenda prendaSuperior;
-  private Prenda prendaInferior;
-  private Prenda calzado;
-  private Prenda accesorio;
-
-  public Atuendo(Prenda prendaSuperior, Prenda prendaInferior, Prenda calzado, Prenda accesorio) {
-    this.prendaSuperior = prendaSuperior;
-    this.prendaInferior = prendaInferior;
-    this.calzado = calzado;
-    this.accesorio = accesorio;
-  }
-
-  public Prenda getPrendaSuperior() {
-    return prendaSuperior;
-  }
-
-  public Prenda getPrendaInferior() {
-    return prendaInferior;
-  }
-
-  public Prenda getCalzado() {
-    return calzado;
-  }
-
-  public Prenda getAccesorio() {
-    return accesorio;
-  }
+public interface ServicioMeteorologico {
+  EstadoDelClima obtenerCondicionesClimaticas(String ciudad);
 }
 
-class Guardarropa {
+public class AccuWeather implements ServicioMeteorologico {
 
-  private Set<Prenda> prendasSuperiores;
-  private Set<Prenda> prendasInferiores;
-  private Set<Prenda> calzados;
-  private Set<Prenda> accesorios;
+  private AccuWeatherAPI apiClima;
+  private RepositorioClima repositorioClima;
+  private Long periodoDeActualizacion = 12L;
 
-  public List<Atuendo> generarSugerencias() {
-    return Sets
-        .cartesianProduct(prendasAptas(prendasSuperiores), prendasAptas(prendasInferiores), prendasAptas(calzados), prendasAptas(accesorios))
+  public AccuWeather(AccuWeatherAPI apiClima, RepositorioClima repositorioClima) {
+    this.apiClima = apiClima;
+    this.repositorioClima = repositorioClima;
+  }
+
+  @Override
+  public EstadoDelClima obtenerCondicionesClimaticas(String ciudad) {
+    validarUltimaConsulta(ciudad);
+    return repositorioClima.getCondicionClimatica(ciudad);
+  }
+
+  private void validarUltimaConsulta(String ciudad) {
+    if (repositorioClima.climaEstaDesactualizado(ciudad, periodoDeActualizacion)) {
+      repositorioClima.setCondicionesClimaticas(
+          ciudad,
+          LocalDateTime.now(),
+          consultarApi(ciudad)
+      );
+    }
+  }
+
+  //devuelve una lista con 12 elementos, uno por cada hora (AccuWeatherAPI devuelve el pronostico de 12 horas)
+  private List<EstadoDelClima> consultarApi(String ciudad) {
+    return apiClima
+        .getWeather(ciudad)
         .stream()
-        .map((list) -> new Atuendo(list.get(0), list.get(1), list.get(2), list.get(3)))
+        .map(this::generarEstadoDelClima)
         .collect(Collectors.toList());
   }
-
-  private Set<Prenda> prendasAptas(Set<Prenda> prendas) {
-    Set<Prenda> prendasAptas = prendas.stream()
-        .filter(Prenda::sePuedeSugerir)
-        .collect(Collectors.toSet());
-    prendasAptas.forEach(Prenda::usar);
-    return prendasAptas;
-  }
-
 }
 
-interface EstadoPrenda {
-
-  void usar();
-  void mandarALavar();
-  void sacarDelLavarropa();
-  Boolean sePuedeSugerir();
+public class EstadoDelClima {
+  BigDecimal temperatura;
+  BigDecimal humedad;
 }
 
-class Limpia implements EstadoPrenda {
-  private Integer usos = 0;
-  private Prenda prenda;
+public class RepositorioClima {
 
-  public Limpia(Prenda prenda) {
-    this.prenda = prenda;
+  //SINGLETON <--------------------------------
+
+  private final Map<String, Object> condicionesClimaticas = new HashMap<>();
+
+  public EstadoDelClima getCondicionClimatica(String ciudad) {
+    return ((List<EstadoDelClima>) condicionesClimaticas.get(ciudad)).get(horarioAUtilizar(ciudad));
   }
 
-  public void usar() {
-    usos++;
-    if(usos >= 2) prenda.setEstado(new Sucia(prenda));
+  public void setCondicionesClimaticas(String ciudad, LocalDateTime ultimaActualizacion,
+                                       List<EstadoDelClima> condicionesClimaticas) {
+    this.condicionesClimaticas.put(ciudad, condicionesClimaticas);
+    this.condicionesClimaticas.put(ciudad + "ultimaActualizacion", ultimaActualizacion);
   }
 
-  public void mandarALavar() {
-    prenda.setEstado(new Lavandose(prenda));
+  public Boolean climaEstaDesactualizado(String ciudad, Long periodoDeActualizacion) {
+    if (this.ultimaActualizacionDe(ciudad) == null) return true;
+    return HOURS.between(LocalDateTime.now(), this.ultimaActualizacionDe(ciudad)) >= periodoDeActualizacion;
   }
 
-  public void sacarDelLavarropa() {}
+  private int horarioAUtilizar(String ciudad) {
+    return (int) Duration.between(LocalDateTime.now(), this.ultimaActualizacionDe(ciudad)).toHours();
+  }
 
-  public Boolean sePuedeSugerir() {
-    return true;
+  private LocalDateTime ultimaActualizacionDe(String ciudad) {
+    return (LocalDateTime) condicionesClimaticas.get(ciudad + "ultimaActualizacion");
   }
 }
 
-class Sucia implements EstadoPrenda {
-  private Integer usos = 0;
-  private Prenda prenda;
+public class AsesorDeImagen {
 
-  public Sucia(Prenda prenda) {
-    this.prenda = prenda;
+  private ServicioMeteorologico servicioMeteorologico;
+
+  public AsesorDeImagen(ServicioMeteorologico servicioMeteorologico) {
+    this.servicioMeteorologico = servicioMeteorologico;
   }
 
-  public void usar() {
-    usos++;
-    if(usos >= 3) prenda.setEstado(new Percutida(prenda));
-  }
-
-  public void mandarALavar() {
-    prenda.setEstado(new Lavandose(prenda));
-  }
-
-  public void sacarDelLavarropa() {}
-
-  public Boolean sePuedeSugerir() {
-    return true;
-  }
-}
-
-class Percutida implements EstadoPrenda {
-  private Prenda prenda;
-
-  public Percutida(Prenda prenda) {
-    this.prenda = prenda;
-  }
-
-  public void usar() {}
-
-  public void mandarALavar() {}
-
-  public void sacarDelLavarropa() {}
-
-  public Boolean sePuedeSugerir() {
-    return false;
-  }
-}
-
-class Lavandose implements EstadoPrenda {
-  private Prenda prenda;
-
-  public Lavandose(Prenda prenda) {
-    this.prenda = prenda;
-  }
-
-  public void usar() {}
-
-  public void mandarALavar() {}
-
-  public void sacarDelLavarropa() {
-    prenda.setEstado(new Limpia(prenda));
-  }
-
-  public Boolean sePuedeSugerir() {
-    return false;
+  public Atuendo sugerirAtuendo(String ciudad, Guardarropa guardarropa) {
+    BigDecimal temperaturaActual = servicioMeteorologico.obtenerCondicionesClimaticas(ciudad).getTemperatura();
+    return guardarropa.generarSugerencias().stream()
+        .filter(atuendo -> atuendo.esAdecuadoPara(temperaturaActual))
+        .collect(Collectors.toList())
+        .get(0);
   }
 }
 
 class Prenda {
-
-  private TipoPrenda tipo;
-  private TipoMaterial tipoMaterial;
-  private Trama trama;
-  private Color colorPrincipal;
-  private Color colorSecundario;
-  private EstadoPrenda estado;
-
-  public Prenda(TipoPrenda tipo, TipoMaterial tipoMaterial, Trama trama, Color colorPrincipal, Color colorSecundario) {
-    this.tipo = tipo;
-    this.tipoMaterial = tipoMaterial;
-    this.trama = trama;
-    this.colorPrincipal = colorPrincipal;
-    this.colorSecundario = colorSecundario;
-    this.estado = new Limpia(this);
+  ...
+  public Boolean esAdecuadaPara(BigDecimal temperaturaActual) {
+    return this.temperaturaMaximaDeUso.compareTo(temperaturaActual) >= 0;
   }
+  ...
 
-  public Prenda usar() {
-    estado.usar();
-    return this;
+}
+
+class Atuendo {
+  ...
+  public Boolean esAdecuadoPara(BigDecimal temperaturaActual) {
+    return this.prendaSuperior.esAdecuadaPara(temperaturaActual) &&
+        this.prendaInferior.esAdecuadaPara(temperaturaActual) &&
+        this.calzado.esAdecuadaPara(temperaturaActual) &&
+        this.accesorio.esAdecuadaPara(temperaturaActual);
   }
-
-  public Prenda mandarALavar() {
-    estado.mandarALavar();
-    return this;
-  }
-
-  public Prenda sacarDelLavarropa() {
-    estado.sacarDelLavarropa();
-    return this;
-  }
-
-  public Boolean sePuedeSugerir() {
-    return estado.sePuedeSugerir();
-  }
-
-  public void setEstado(EstadoPrenda estado) {
-    this.estado = estado;
-  }
-
+  ...
 }
 
 ~~~
