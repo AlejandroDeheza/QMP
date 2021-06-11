@@ -1,0 +1,88 @@
+@startuml
+
+class dominio.usuario.NotificationServiceAPI {
++ void notify(String)
+}
+class dominio.usuario.ActualizadorSugerencias {
+- String ciudad
++ void actualizar(List<String>)
++ void suscribirse(Usuario)
++ void desuscribirse(Usuario)
+}
+class dominio.usuario.Usuario {
+- List<Guardarropa> guardarropas
+- List<Atuendo> sugerencias
+- NotificationServiceAPI servicioDeNotificacion
+- MailSender mailSender
+- String email
++ void agregarSugerencia(Atuendo)
++ void notificar(String)
++ void enviarMail(String)
+}
+class dominio.usuario.NotificadorGranizo {
+- String texto
++ void actualizar(List<String>)
++ void suscribirse(Usuario)
++ void desuscribirse(Usuario)
+}
+interface dominio.usuario.ObserverClima {
+~ void actualizar(List<String>)
+~ void suscribirse(Usuario)
+~ void desuscribirse(Usuario)
+}
+class dominio.usuario.MailSenderAlertas {
+- String texto
++ void actualizar(List<String>)
++ void suscribirse(Usuario)
++ void desuscribirse(Usuario)
+}
+class dominio.clima.AccuWeatherAPI {
++ List<Map<String,Object>> getWeather(String)
++ Map<String,Object> getAlertas(String)
+}
+class dominio.usuario.AsesorDeImagen {
+- ServicioMeteorologico servicioMeteorologico
++ Atuendo sugerirAtuendo(String,Guardarropa)
+}
+class dominio.usuario.RepositorioUsuarios {
+- List<Usuario> usuarios
++ void calcularSugerenciasDiarias(String,AsesorDeImagen)
+}
+class dominio.clima.AccuWeather {
++ EstadoDelClima obtenerCondicionesClimaticas(String)
++ void actualizarAlertasMeteorologicas(String,AsesorDeImagen)
+}
+class dominio.clima.RepositorioClima {
+- Map<String,Object> condicionesClimaticas
+- Map<String,List<String>> alertasMeteorologicas
++ EstadoDelClima getCondicionClimatica(String)
++ List<String> getAlertasMeteorologicas(String)
+}
+interface dominio.clima.ServicioMeteorologico {
+~ EstadoDelClima obtenerCondicionesClimaticas(String)
+~ void actualizarAlertasMeteorologicas(String,AsesorDeImagen)
+}
+class dominio.usuario.NotificadorTormenta {
+- String texto
++ void actualizar(List<String>)
++ void suscribirse(Usuario)
++ void desuscribirse(Usuario)
+}
+class dominio.usuario.MailSender {
++ void send(String,String)
+}
+
+dominio.clima.ServicioMeteorologico <|.. dominio.clima.AccuWeather
+dominio.usuario.ObserverClima <|.. dominio.usuario.ActualizadorSugerencias
+dominio.usuario.ObserverClima <|.. dominio.usuario.NotificadorGranizo
+dominio.usuario.ObserverClima <|.. dominio.usuario.MailSenderAlertas
+dominio.usuario.ObserverClima <|.. dominio.usuario.NotificadorTormenta
+dominio.usuario.ObserverClima "*" <-left- dominio.clima.ServicioMeteorologico: observersClima
+dominio.clima.RepositorioClima <-- dominio.clima.ServicioMeteorologico: repositorioClima
+dominio.clima.AccuWeatherAPI <-right- dominio.clima.AccuWeather: apiClima
+dominio.usuario.Usuario "*" <-- dominio.usuario.ObserverClima : suscritos
+dominio.usuario.Usuario "*" <-- dominio.usuario.RepositorioUsuarios: usuarios
+dominio.usuario.NotificationServiceAPI <-- dominio.usuario.Usuario: servicioDeNotificacion
+dominio.usuario.MailSender <-- dominio.usuario.Usuario: mailSender
+dominio.usuario.AsesorDeImagen <-up- dominio.usuario.ActualizadorSugerencias: asesorDeImagen
+@enduml

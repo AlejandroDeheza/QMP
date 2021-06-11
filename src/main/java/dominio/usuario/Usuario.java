@@ -9,13 +9,20 @@ public class Usuario {
   private List<PropuestaGuardarropa> propuestasPendientes;
   private List<PropuestaGuardarropa> propuestasAceptadas;
   private List<Atuendo> sugerencias;
+  private NotificationServiceAPI servicioDeNotificacion;
+  private MailSender mailSender;
+  private String email;
 
   public Usuario(List<Guardarropa> guardarropas, List<PropuestaGuardarropa> propuestasPendientes,
-                 List<PropuestaGuardarropa> propuestasAceptadas, List<Atuendo> sugerencias) {
+                 List<PropuestaGuardarropa> propuestasAceptadas, List<Atuendo> sugerencias,
+                 NotificationServiceAPI servicioDeNotificacion, MailSender mailSender, String email) {
     this.guardarropas = guardarropas;
     this.propuestasPendientes = propuestasPendientes;
     this.propuestasAceptadas = propuestasAceptadas;
     this.sugerencias = sugerencias;
+    this.servicioDeNotificacion = servicioDeNotificacion;
+    this.mailSender = mailSender;
+    this.email = email;
   }
 
   public void agregarSugerencia(Atuendo sugerencia) {
@@ -51,8 +58,19 @@ public class Usuario {
     this.propuestasPendientes.add(propuesta);
   }
 
+  public void notificar(String text) {
+    this.servicioDeNotificacion.notify(text);
+  }
+
+  public void enviarMail(String texto) {
+    this.mailSender.send(this.email, texto);
+  }
 
   // GETTERS
+
+  public List<Guardarropa> getGuardarropas() {
+    return this.guardarropas;
+  }
 
   public List<PropuestaGuardarropa> getPropuestasPendientes() {
     return propuestasPendientes;
