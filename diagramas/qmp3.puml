@@ -1,0 +1,76 @@
+@startuml
+class Atuendo {
+}
+
+class Guardarropa {
++ List<Atuendo> generarSugerencias()
+}
+
+interface EstadoPrenda {
+~ void usar()
+~ void mandarALavar()
+~ void sacarDelLavarropa()
+~ Boolean sePuedeSugerir()
+}
+
+class Limpia{
+- Integer usos
++ void usar()
++ void mandarALavar()
++ void sacarDelLavarropa()
++ Boolean sePuedeSugerir()
+}
+
+class Sucia{
+- Integer usos
++ void usar()
++ void mandarALavar()
++ void sacarDelLavarropa()
++ Boolean sePuedeSugerir()
+}
+
+class Percutida{
++ void usar()
++ void mandarALavar()
++ void sacarDelLavarropa()
++ Boolean sePuedeSugerir()
+}
+
+class Lavandose{
++ void usar()
++ void mandarALavar()
++ void sacarDelLavarropa()
++ Boolean sePuedeSugerir()
+}
+
+class Prenda {
+- TipoPrenda tipo
+- TipoMaterial tipoMaterial
+- Trama trama
+- Color colorPrincipal
+- Color colorSecundario
++ void usar()
++ void mandarALavar()
++ void sacarDelLavarropa()
++ Boolean sePuedeSugerir()
+}
+
+Prenda <-left- Atuendo : prendaSuperior
+Prenda <-left- Atuendo : prendaInferior
+Prenda <-left- Atuendo : calzado
+Prenda <-left- Atuendo : accesorio
+
+Prenda "*" <-right- Guardarropa : prendasSuperiores
+Prenda "*" <-right- Guardarropa : prendasInferiores
+Prenda "*" <-right- Guardarropa : calzados
+Prenda "*" <-right- Guardarropa : accesorios
+
+Atuendo <.right. Guardarropa
+
+EstadoPrenda <-up- Prenda : estado
+
+EstadoPrenda <|.. Limpia
+EstadoPrenda <|.. Sucia
+EstadoPrenda <|.. Percutida
+EstadoPrenda <|.. Lavandose
+@enduml

@@ -1,0 +1,46 @@
+@startuml
+
+class Guardarropa {
+- String criterioGuardarropa
++ void agregarPrenda(Prenda prenda)
++ void quitarPrenda(Prenda prenda)
+}
+
+Interface PropuestaGuardarropa {
+~ void aplicar()
+~ void deshacer()
+}
+
+class AgregarPrenda {
++ void aplicar()
++ void deshacer()
+}
+
+class QuitarPrenda {
++ void aplicar()
++ void deshacer()
+}
+
+class Usuario {
+- List<PropuestaGuardarropa> propuestasPendientes
+- List<PropuestaGuardarropa> propuestasAceptadas
++ void agregarGuardarropa(Guardarropa guardarropa)
++ void removerGuardarropa(Guardarropa guardarropa)
++ void agregarPropuesta(PropuestaGuardarropa propuesta)
++ void rechazarPropuesta(PropuestaGuardarropa propuesta)
++ void aceptarPropuesta(PropuestaGuardarropa propuesta)
++ void deshacerPropuesta(PropuestaGuardarropa propuesta)
+}
+
+Prenda "*" <--up Guardarropa: prendas
+PropuestaGuardarropa <|.. AgregarPrenda
+PropuestaGuardarropa <|.. QuitarPrenda
+Guardarropa <--up AgregarPrenda: guardarropa
+Prenda <--up AgregarPrenda: prenda
+Guardarropa <--up QuitarPrenda: guardarropa
+Prenda <--up QuitarPrenda: prenda
+Guardarropa "*" <--up Usuario: guardarropas
+PropuestaGuardarropa "*" <-- Usuario
+PropuestaGuardarropa "*" <-- Usuario
+
+@enduml

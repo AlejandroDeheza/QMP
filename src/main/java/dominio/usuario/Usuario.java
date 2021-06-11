@@ -1,43 +1,65 @@
 package dominio.usuario;
 
-import dominio.clima.ServicioClima;
 import dominio.ropa.Atuendo;
-import dominio.ropa.Prenda;
-import dominio.uniforme.Uniforme;
 
 import java.util.List;
 
 public class Usuario {
+  private List<Guardarropa> guardarropas;
+  private List<PropuestaGuardarropa> propuestasPendientes;
+  private List<PropuestaGuardarropa> propuestasAceptadas;
+  private List<Atuendo> sugerencias;
 
-  private final List<Prenda> guardarropas;
-  private final List<Atuendo> sugerencias;
-  private final List<Uniforme> sugerenciasUniformes;
-  private final GeneradorSugerencias generadorSugerencias;
-  private final ServicioClima servicioClima;
-
-  public Usuario(List<Prenda> guardarropas, List<Atuendo> sugerencias, List<Uniforme> sugerenciasUniformes,
-                 GeneradorSugerencias generadorSugerencias, ServicioClima servicioClima) {
+  public Usuario(List<Guardarropa> guardarropas, List<PropuestaGuardarropa> propuestasPendientes,
+                 List<PropuestaGuardarropa> propuestasAceptadas, List<Atuendo> sugerencias) {
     this.guardarropas = guardarropas;
+    this.propuestasPendientes = propuestasPendientes;
+    this.propuestasAceptadas = propuestasAceptadas;
     this.sugerencias = sugerencias;
-    this.sugerenciasUniformes = sugerenciasUniformes;
-    this.generadorSugerencias = generadorSugerencias;
-    this.servicioClima = servicioClima;
-  }
-
-  public Integer getTemperaturaCelciusActual(String ciudad) {
-    return servicioClima.getTemperaturaCelciusActual(ciudad);
   }
 
   public void agregarSugerencia(Atuendo sugerencia) {
-    sugerencias.add(sugerencia);
+    sugerencias.add(sugerencia);  // de qmp anteriores
   }
 
-  public void pedirSugerenciaSegunClimaActual(String ciudad) {
-    agregarSugerencia(generadorSugerencias.generarSugerenciaSegunClimaActual(ciudad, guardarropas));
+  public void agregarGuardarropa(Guardarropa guardarropa) {
+    this.guardarropas.add(guardarropa);
+  }
+
+  public void removerGuardarropa(Guardarropa guardarropa) {
+    this.guardarropas.remove(guardarropa);
+  }
+
+  public void agregarPropuesta(PropuestaGuardarropa propuesta) {
+    propuestasPendientes.add(propuesta);
+  }
+
+  public void rechazarPropuesta(PropuestaGuardarropa propuesta) {
+    propuestasPendientes.remove(propuesta);
+  } // no valido que la "propuesta" este en "propuestas" -> confiar en el adentro
+  // la "propuesta" seguramente se obtenga de un listado (en la UI) generado a partir de esta misma lista "propuestas"
+
+  public void aceptarPropuesta(PropuestaGuardarropa propuesta) {
+    propuesta.aplicar();
+    this.propuestasPendientes.remove(propuesta);
+    this.propuestasAceptadas.add(propuesta);
+  }
+
+  public void deshacerPropuesta(PropuestaGuardarropa propuesta) {
+    propuesta.deshacer();
+    this.propuestasAceptadas.remove(propuesta);
+    this.propuestasPendientes.add(propuesta);
   }
 
 
-  public void agregarSugerenciaUniforme(Uniforme sugerencia) {
-    sugerenciasUniformes.add(sugerencia);
+  // GETTERS
+
+  public List<PropuestaGuardarropa> getPropuestasPendientes() {
+    return propuestasPendientes;
   }
+
+  public List<PropuestaGuardarropa> getPropuestasAceptadas() {
+    return propuestasAceptadas;
+  }
+
 }

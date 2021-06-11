@@ -1,4 +1,5 @@
 @startuml
+
 class dominio.clima.AccuWeatherAPI {
 + List<Map<String,Object>> getWeather(String)
 }
@@ -18,6 +19,9 @@ class dominio.clima.RepositorioClima {
 + Boolean climaEstaDesactualizado(String ciudad, Long periodoDeActualizacion)
 }
 class dominio.usuario.Guardarropa {
+- String criterioGuardarropa
++ void agregarPrenda(Prenda prenda)
++ void quitarPrenda(Prenda prenda)
 + List<Atuendo> generarSugerencias()
 }
 class dominio.usuario.AsesorDeImagen {
@@ -44,7 +48,7 @@ dominio.ropa.Prenda <-left- dominio.ropa.Atuendo :prendaInferior
 dominio.ropa.Prenda <-left- dominio.ropa.Atuendo :calzado
 dominio.ropa.Prenda <-left- dominio.ropa.Atuendo :accesorio
 
-dominio.ropa.Prenda "*" <-right- dominio.usuario.Guardarropa :prendasSuperiores
+dominio.ropa.Prenda "*" <-- dominio.usuario.Guardarropa :prendasSuperiores
 dominio.ropa.Prenda "*" <-- dominio.usuario.Guardarropa :prendasInferiores
 dominio.ropa.Prenda "*" <-- dominio.usuario.Guardarropa :calzados
 dominio.ropa.Prenda "*" <-- dominio.usuario.Guardarropa :accesorios
@@ -57,5 +61,45 @@ dominio.clima.ServicioMeteorologico <|.down. dominio.clima.AccuWeather
 
 dominio.clima.EstadoDelClima <.right. dominio.clima.ServicioMeteorologico
 dominio.clima.RepositorioClima <-right- dominio.clima.ServicioMeteorologico : repositorioClima
+
+
+
+
+
+Interface dominio.usuario.PropuestaGuardarropa {
+~ void aplicar()
+~ void deshacer()
+}
+
+class dominio.usuario.AgregarPrenda {
++ void aplicar()
++ void deshacer()
+}
+
+class dominio.usuario.QuitarPrenda {
++ void aplicar()
++ void deshacer()
+}
+
+class dominio.usuario.Usuario {
+- List<PropuestaGuardarropa> propuestasPendientes
+- List<PropuestaGuardarropa> propuestasAceptadas
++ void agregarGuardarropa(Guardarropa guardarropa)
++ void removerGuardarropa(Guardarropa guardarropa)
++ void agregarPropuesta(PropuestaGuardarropa propuesta)
++ void rechazarPropuesta(PropuestaGuardarropa propuesta)
++ void aceptarPropuesta(PropuestaGuardarropa propuesta)
++ void deshacerPropuesta(PropuestaGuardarropa propuesta)
+}
+
+dominio.usuario.PropuestaGuardarropa <|.. dominio.usuario.AgregarPrenda
+dominio.usuario.PropuestaGuardarropa <|.. dominio.usuario.QuitarPrenda
+dominio.usuario.Guardarropa <--up dominio.usuario.AgregarPrenda: guardarropa
+dominio.ropa.Prenda <-- dominio.usuario.AgregarPrenda: prenda
+dominio.usuario.Guardarropa <--up dominio.usuario.QuitarPrenda: guardarropa
+dominio.ropa.Prenda <-- dominio.usuario.QuitarPrenda: prenda
+dominio.usuario.Guardarropa "*" <--up dominio.usuario.Usuario: guardarropas
+dominio.usuario.PropuestaGuardarropa "*" <-right- dominio.usuario.Usuario
+dominio.usuario.PropuestaGuardarropa "*" <-right- dominio.usuario.Usuario
 
 @enduml

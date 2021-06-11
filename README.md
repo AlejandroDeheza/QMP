@@ -1,188 +1,115 @@
-# QMP-Cuarta-Iteracion
+# QMP-Quinta-Iteracion
 
 ## Diagrama de clases - REQUERIMIENTOS DE ESTA ITERACION
 
 <p align="center"> 
-<img src="diagramas/QMP4-resumido.png">
+<img src="diagramas/qmp5-r.png">
 </p>
-
-## Explicacion
-
-* Para que el Usuario pueda conocer las condiciones climaticas, se le agregó un metodo para consultar 
-  contra el ServicioClima directamente. Se podría consultar contra el GeneradorSugerencias, pero solo serviría para 
-  volver a delegar el mensaje en el ServicioClima. Además de que semánticamente no tendria mucho sentido.
-
-
-* Para que se puedan recibir las sugerencias, se agregó la clase Atuendos con 4 listas, una para cada categoria de 
-  prenda, lo cual permite que se le puedan agregar más prendas a futuro sin problemas, lo cual hace que la solucion 
-  sea un poco más extensible.
-  
-
-* Para que cada prenda tenga especificada su temperatura maxima soportable, se agregó el atributo 
-  "temperaturaMaximaDeUso" a cada TipoPrenda, lo cual permite tratarlas de manera polimórfica.
-  
-
-* Para poder configurar fácilmente diferentes servicios de obtención del clima se generó una interfaz "ServicioClima", 
-  para que las clases que lo implementen se encarguen de tener la logica necesaria para obtener el clima de un 
-  determinado proveedor. Esto permite agregar otra implementacion (en otra clase que implemente "ServicioClima") para 
-  otro proveedor manteniendo la misma interfaz. De esta forma, la implementacion especifica para obtener el clima 
-  no estaría acoplada al resto de nuestro sistema, lo que favorece la extensibilidad. Y además que nuestro sistema 
-  siempre va a consultar contra la misma interfaz, sin importar de que proveedor de clima se tratase.
-  
-
-* Para evitar costos adicionales, se decidio cachear los datos provistos por el ServicioClima para realizar la minima 
-  cantidad de consultas necesarias.
-  
-
 
 ## Diagrama de clases - SOLUCION COMPLETA
 
 <p align="center"> 
-<img src="diagramas/QMP4.png">
+<img src="diagramas/qmp5.png">
 </p>
-
 
 ## Pseudocodigo
 
 ~~~
 
+class Guardarropa {
+
+  String criterioGuardarropa
+  List<Prenda> prendas;
+  
+  agregarPrenda(Prenda prenda) {
+    prendas.add(prenda)
+  }
+  
+  quitarPrenda(Prenda prenda) {
+    prendas.remove(prenda)
+  }
+}
+
+Interface PropuestaGuardarropa {
+    
+    void aplicar()
+    void deshacer()
+}
+
+class AgregarPrenda {
+
+    Guardarropa guardarropa;
+    Prenda prenda;
+
+    public AgregarPrenda(Guardarropa guardarropa, Prenda prenda) {
+    this.guardarropa = guardarropa;
+    this.prenda = prenda;
+    }
+    
+    void aplicar() {
+        guardarropa.agregarPrenda(prenda)
+    }
+    
+    void deshacer() {
+        guardarropa.quitarPrenda(prenda)
+    }
+}
+
+class QuitarPrenda {
+
+    Guardarropa guardarropa;
+    Prenda prenda;
+
+    public QuitarPrenda(Guardarropa guardarropa, Prenda prenda) {
+    this.guardarropa = guardarropa;
+    this.prenda = prenda;
+    }
+    
+    void aplicar() {
+        guardarropa.quitarPrenda(prenda)
+    }
+    
+    void deshacer() {
+        guardarropa.agregarPrenda(prenda)
+    }
+}
+
+
 class Usuario {
 
-  private final List<Prenda> guardarropas;
-  private final List<Atuendo> sugerencias;
-  private final GeneradorSugerencias generadorSugerencias;
-  private final ServicioClima servicioClima;
-
-  public Usuario(List<Prenda> guardarropas, List<Atuendo> sugerencias, GeneradorSugerencias generadorSugerencias, 
-                ServicioClima servicioClima) {
-    this.guardarropas = guardarropas;
-    this.sugerencias = sugerencias;
-    this.generadorSugerencias = generadorSugerencias;
-    this.servicioClima = servicioClima;
-  }
+  List<Guardarropa> guardarropas;
+  List<PropuestaGuardarropa> propuestasPendientes;
+  List<PropuestaGuardarropa> propuestasAceptadas;
   
-  public Integer getTemperaturaCelciusActual(String ciudad) {
-    return servicioClima.getTemperaturaCelciusActual(ciudad);
-  }
-  
-  public void agregarSugerencia(Atuendo sugerencia){
-    sugerencias.add(sugerencia);
-  }
-  
-  public void pedirSugerenciaSegunClimaActual(String ciudad) {
-    agregarSugerencia(generador.generarSugerenciaSegunClimaActual(ciudad, guardarropas));
+  public void agregarGuardarropa(Guardarropa guardarropa) {
+    this.guardarropas.add(guardarropa);
   }
 
-}
-
-class Atuendo {
-
-  private List<Prenda> prendaSuperiores;
-  private List<Prenda> prendaInferiores;
-  private List<Prenda> calzados;
-  private List<Prenda> accesorios;
-}
-
-class GeneradorSugerencias {
-
-  private ServicioClima servicioClima;
-  
-  public GeneradorSugerencias(ServicioClima servicioClima) {
-    this.servicioClima = servicioClima;
+  public void removerGuardarropa(Guardarropa guardarropa) {
+    this.guardarropas.remove(guardarropa);
   }
 
-  public Atuendo generarSugerenciaSegunClimaActual(String ciudad, List<Prenda> prendas) {
-    Integer temperaturaActual = servicioClima.getTemperaturaCelciusActual(ciudad);
-    prendasAdecuadas = prendas.filter(prenda -> prenda.esAdecuadaPara(temperaturaActual));
-    return generarAtuendo(prendasAdecuadas);
-  }
-  
-  private Atuendo generarAtuendo(List<Prenda> prendas) {
-    return new Atuendo(); //TODO
-  }
-  
-}
-
-public enum TipoPrenda {
-
-  CHOMBA(CategoriaPrenda.PARTE_SUPERIOR, 50), CAMISA(CategoriaPrenda.PARTE_SUPERIOR, 50)
-  
-  private CategoriaPrenda categoria;
-  private Integer temperaturaMaximaDeUso;
-
-  TipoPrenda(CategoriaPrenda categoria, Integer temperaturaMaximaDeUso){
-    this.categoria = categoria;
-    this.temperaturaMaximaDeUso = temperaturaMaximaDeUso;
+  public void agregarPropuesta(PropuestaGuardarropa propuesta) {
+    propuestasPendientes.add(propuesta);
   }
 
-  public CategoriaPrenda getCategoria(){
-    return this.categoria;
-  }
-  
-  public Integer getTemperaturaMaximaDeUso(){
-    return this.temperaturaMaximaDeUso;
-  }
-  
-  public Boolean esAdecuadaPara(Integer temperaturaActual){
-    return this.temperaturaMaximaDeUso >= temperaturaActual;
-  }
-}
+  public void rechazarPropuesta(PropuestaGuardarropa propuesta) {
+    propuestasPendientes.remove(propuesta);
+  } // no valido que la "propuesta" este en "propuestas" -> confiar en el adentro
+  // la "propuesta" seguramente se obtenga de un listado (en la UI) generado a partir de esta misma lista "propuestas"
 
-interface ServicioClima {
-  
-  Integer getProbabilidadDePrecipitacionesActual(String ciudad);
-  
-  Integer getTemperaturaCelciusActual(String ciudad);
-}
-
-class AccuWeather implements ServicioClima {
-
-  private List<Map<String, Object>> condicionesClimaticas; //cacheado para ahorrar costes
-  private LocalDateTime ultimaConsultaDelCLima = LocalDateTime.now() - 13 horas;
-  
-  
-  private static AccuWeather INSTANCE;
-
-  //usariamos el constructor solo para tests
-  public AccuWeather() { }
-
-  //usariamos el getInstance en el codigo
-  public static AccuWeather getInstance() {
-    if (INSTANCE == null) {
-      INSTANCE = new AccuWeather();
-    }
-    return INSTANCE;
+  public void aceptarPropuesta(PropuestaGuardarropa propuesta) {
+    propuesta.aplicar();
+    this.propuestasPendientes.remove(propuesta);
+    this.propuestasAceptadas.add(propuesta);
   }
 
-  
-  public Integer getProbabilidadDePrecipitacionesActual(String ciudad) {
-    validarUltimaConsulta(ciudad) //logica repetida, no creo que valga la pena arreglarlo
-    return condicionesClimaticas.get(0).get("PrecipitationProbability"); //Devuelve un número del 0 al 1
+  public void deshacerPropuesta(PropuestaGuardarropa propuesta) {
+    propuesta.deshacer();
+    this.propuestasAceptadas.remove(propuesta);
+    this.propuestasPendientes.add(propuesta);
   }
-  
-  public Integer getTemperaturaCelciusActual(String ciudad) {
-    validarUltimaConsulta(ciudad) //logica repetida, no creo que valga la pena arreglarlo
-    return pasarACelcius(condicionesClimaticas.get(0).get("Temperature").get("Value"));
-  }
-  
-  private void validarUltimaConsulta(String ciudad) {
-    if (seConsultoClimaHaceMasDe(12 horas)) {
-      AccuWeatherAPI apiClima = new AccuWeatherAPI();
-      condicionesClimaticas = apiClima.getWeather(ciudad);
-      ultimaConsultaDelCLima = LocalDateTime.now(); 
-    }
-  }
-  
-  private Boolean seConsultoClimaHaceMasDe(periodo) {
-    return (LocalDateTime.now() - ultimaConsultaDelCLima) >= periodo //TODO
-  }
-  
-  private Integer pasarACelcius(Integer fahrenheit) {
-    return 33;  //TODO
-  }
-  
-}
-
+}  
 
 ~~~
 

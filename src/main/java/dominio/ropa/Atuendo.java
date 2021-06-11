@@ -1,36 +1,42 @@
 package dominio.ropa;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 public class Atuendo {
 
-  private final List<Prenda> prendaSuperiores;
-  private final List<Prenda> prendaInferiores;
-  private final List<Prenda> calzados;
-  private final List<Prenda> accesorios;
+  private Prenda prendaSuperior;
+  private Prenda prendaInferior;
+  private Prenda calzado;
+  private Prenda accesorio;
 
-  public Atuendo(List<Prenda> prendaSuperiores, List<Prenda> prendaInferiores, List<Prenda> calzados,
-                 List<Prenda> accesorios) {
-    this.prendaSuperiores = prendaSuperiores;
-    this.prendaInferiores = prendaInferiores;
-    this.calzados = calzados;
-    this.accesorios = accesorios;
+  public Atuendo(Prenda prendaSuperior, Prenda prendaInferior, Prenda calzado, Prenda accesorio) {
+    this.prendaSuperior = prendaSuperior;
+    this.prendaInferior = prendaInferior;
+    this.calzado = calzado;
+    this.accesorio = accesorio;
   }
 
-  public List<Prenda> getPrendaSuperiores() {
-    return prendaSuperiores;
+  public Boolean esAdecuadoPara(BigDecimal temperaturaActual) {
+    return this.prendaSuperior.esAdecuadaPara(temperaturaActual) &&
+        this.prendaInferior.esAdecuadaPara(temperaturaActual) &&
+        this.calzado.esAdecuadaPara(temperaturaActual) &&
+        this.accesorio.esAdecuadaPara(temperaturaActual);
   }
 
-  public List<Prenda> getPrendaInferiores() {
-    return prendaInferiores;
+  public Prenda getPrendaSuperiores() {
+    return prendaSuperior;
   }
 
-  public List<Prenda> getCalzados() {
-    return calzados;
+  public Prenda getPrendaInferiores() {
+    return prendaInferior;
   }
 
-  public List<Prenda> getAccesorios() {
-    return accesorios;
+  public Prenda getCalzados() {
+    return calzado;
+  }
+
+  public Prenda getAccesorios() {
+    return accesorio;
   }
 
 }
