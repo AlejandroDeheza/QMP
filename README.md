@@ -1,148 +1,115 @@
-# QMP-Cuarta-Iteracion
+# QMP-Quinta-Iteracion
 
 ## Diagrama de clases - REQUERIMIENTOS DE ESTA ITERACION
 
 <p align="center"> 
-<img src="diagramas/qmp4-rr.png">
+<img src="diagramas/qmp5-r.png">
 </p>
 
-## Notas
+## Diagrama de clases - SOLUCION COMPLETA
 
-* Faltan tests
-
-* El RepositorioClima se usa para guardar los datos del clima cacheados, asi cualquier ServicioMeteorologico puede 
-  acceder a esos datos. Se guardan objetos de nustro sistema (EstadoDelTiempo) en vez de guardarlos con la estructura 
-  que provee AccuWeatherAPI.
-  
-  Otras opcion: dejar a AccuWeather con los datos del clima que genera (convirtiendolo en singleton) 
-  en ves de usar el RepositorioClima.
-
-* Borre:
-~~~
-  public void agregarSugerenciaUniforme(Uniforme sugerencia) {
-  sugerenciasUniformes.add(sugerencia);
-  }
-~~~
-  Porque ahora las sugerencias ahora son de Atuendos en general. Deberia buscar alguna forma para que los Uniformes 
-  sean Atuendos. Capaz haciendo que herede de Atuendo, pero los Uniformes no tienen accesorios. Si no tambien podria 
-  hacer que los Atuendos y Uniformes herenden de otra clase y que las sugerencias tengas ese tipo.
+<p align="center"> 
+<img src="diagramas/qmp5.png">
+</p>
 
 ## Pseudocodigo
 
 ~~~
 
-public interface ServicioMeteorologico {
-  EstadoDelClima obtenerCondicionesClimaticas(String ciudad);
+class Guardarropa {
+
+  String criterioGuardarropa
+  List<Prenda> prendas;
+  
+  agregarPrenda(Prenda prenda) {
+    prendas.add(prenda)
+  }
+  
+  quitarPrenda(Prenda prenda) {
+    prendas.remove(prenda)
+  }
 }
 
-public class AccuWeather implements ServicioMeteorologico {
+Interface PropuestaGuardarropa {
+    
+    void aplicar()
+    void deshacer()
+}
 
-  private AccuWeatherAPI apiClima;
-  private RepositorioClima repositorioClima;
-  private Long periodoDeActualizacion = 12L;
+class AgregarPrenda {
 
-  public AccuWeather(AccuWeatherAPI apiClima, RepositorioClima repositorioClima) {
-    this.apiClima = apiClima;
-    this.repositorioClima = repositorioClima;
-  }
+    Guardarropa guardarropa;
+    Prenda prenda;
 
-  @Override
-  public EstadoDelClima obtenerCondicionesClimaticas(String ciudad) {
-    validarUltimaConsulta(ciudad);
-    return repositorioClima.getCondicionClimatica(ciudad);
-  }
-
-  private void validarUltimaConsulta(String ciudad) {
-    if (repositorioClima.climaEstaDesactualizado(ciudad, periodoDeActualizacion)) {
-      repositorioClima.setCondicionesClimaticas(
-          ciudad,
-          LocalDateTime.now(),
-          consultarApi(ciudad)
-      );
+    public AgregarPrenda(Guardarropa guardarropa, Prenda prenda) {
+    this.guardarropa = guardarropa;
+    this.prenda = prenda;
     }
-  }
-
-  //devuelve una lista con 12 elementos, uno por cada hora (AccuWeatherAPI devuelve el pronostico de 12 horas)
-  private List<EstadoDelClima> consultarApi(String ciudad) {
-    return apiClima
-        .getWeather(ciudad)
-        .stream()
-        .map(this::generarEstadoDelClima)
-        .collect(Collectors.toList());
-  }
+    
+    void aplicar() {
+        guardarropa.agregarPrenda(prenda)
+    }
+    
+    void deshacer() {
+        guardarropa.quitarPrenda(prenda)
+    }
 }
 
-public class EstadoDelClima {
-  BigDecimal temperatura;
-  BigDecimal humedad;
+class QuitarPrenda {
+
+    Guardarropa guardarropa;
+    Prenda prenda;
+
+    public QuitarPrenda(Guardarropa guardarropa, Prenda prenda) {
+    this.guardarropa = guardarropa;
+    this.prenda = prenda;
+    }
+    
+    void aplicar() {
+        guardarropa.quitarPrenda(prenda)
+    }
+    
+    void deshacer() {
+        guardarropa.agregarPrenda(prenda)
+    }
 }
 
-public class RepositorioClima {
 
-  //SINGLETON <--------------------------------
+class Usuario {
 
-  private final Map<String, Object> condicionesClimaticas = new HashMap<>();
-
-  public EstadoDelClima getCondicionClimatica(String ciudad) {
-    return ((List<EstadoDelClima>) condicionesClimaticas.get(ciudad)).get(horarioAUtilizar(ciudad));
+  List<Guardarropa> guardarropas;
+  List<PropuestaGuardarropa> propuestasPendientes;
+  List<PropuestaGuardarropa> propuestasAceptadas;
+  
+  public void agregarGuardarropa(Guardarropa guardarropa) {
+    this.guardarropas.add(guardarropa);
   }
 
-  public void setCondicionesClimaticas(String ciudad, LocalDateTime ultimaActualizacion,
-                                       List<EstadoDelClima> condicionesClimaticas) {
-    this.condicionesClimaticas.put(ciudad, condicionesClimaticas);
-    this.condicionesClimaticas.put(ciudad + "ultimaActualizacion", ultimaActualizacion);
+  public void removerGuardarropa(Guardarropa guardarropa) {
+    this.guardarropas.remove(guardarropa);
   }
 
-  public Boolean climaEstaDesactualizado(String ciudad, Long periodoDeActualizacion) {
-    if (this.ultimaActualizacionDe(ciudad) == null) return true;
-    return HOURS.between(LocalDateTime.now(), this.ultimaActualizacionDe(ciudad)) >= periodoDeActualizacion;
+  public void agregarPropuesta(PropuestaGuardarropa propuesta) {
+    propuestasPendientes.add(propuesta);
   }
 
-  private int horarioAUtilizar(String ciudad) {
-    return (int) Duration.between(LocalDateTime.now(), this.ultimaActualizacionDe(ciudad)).toHours();
+  public void rechazarPropuesta(PropuestaGuardarropa propuesta) {
+    propuestasPendientes.remove(propuesta);
+  } // no valido que la "propuesta" este en "propuestas" -> confiar en el adentro
+  // la "propuesta" seguramente se obtenga de un listado (en la UI) generado a partir de esta misma lista "propuestas"
+
+  public void aceptarPropuesta(PropuestaGuardarropa propuesta) {
+    propuesta.aplicar();
+    this.propuestasPendientes.remove(propuesta);
+    this.propuestasAceptadas.add(propuesta);
   }
 
-  private LocalDateTime ultimaActualizacionDe(String ciudad) {
-    return (LocalDateTime) condicionesClimaticas.get(ciudad + "ultimaActualizacion");
+  public void deshacerPropuesta(PropuestaGuardarropa propuesta) {
+    propuesta.deshacer();
+    this.propuestasAceptadas.remove(propuesta);
+    this.propuestasPendientes.add(propuesta);
   }
-}
-
-public class AsesorDeImagen {
-
-  private ServicioMeteorologico servicioMeteorologico;
-
-  public AsesorDeImagen(ServicioMeteorologico servicioMeteorologico) {
-    this.servicioMeteorologico = servicioMeteorologico;
-  }
-
-  public Atuendo sugerirAtuendo(String ciudad, Guardarropa guardarropa) {
-    BigDecimal temperaturaActual = servicioMeteorologico.obtenerCondicionesClimaticas(ciudad).getTemperatura();
-    return guardarropa.generarSugerencias().stream()
-        .filter(atuendo -> atuendo.esAdecuadoPara(temperaturaActual))
-        .collect(Collectors.toList())
-        .get(0);
-  }
-}
-
-class Prenda {
-  ...
-  public Boolean esAdecuadaPara(BigDecimal temperaturaActual) {
-    return this.temperaturaMaximaDeUso.compareTo(temperaturaActual) >= 0;
-  }
-  ...
-
-}
-
-class Atuendo {
-  ...
-  public Boolean esAdecuadoPara(BigDecimal temperaturaActual) {
-    return this.prendaSuperior.esAdecuadaPara(temperaturaActual) &&
-        this.prendaInferior.esAdecuadaPara(temperaturaActual) &&
-        this.calzado.esAdecuadaPara(temperaturaActual) &&
-        this.accesorio.esAdecuadaPara(temperaturaActual);
-  }
-  ...
-}
+}  
 
 ~~~
 
