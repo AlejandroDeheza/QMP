@@ -2,9 +2,9 @@ package dominio.usuario;
 
 import java.util.List;
 
-public interface ObserverClima {
+public interface InteresadoEnAlertas {
 
-  void actualizar(List<String> alertasActuales);
+  void avisar(List<String> alertasActuales, String ciudad);
 
   void suscribirse(Usuario usuario);
 

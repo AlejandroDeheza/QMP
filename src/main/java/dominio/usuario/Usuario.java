@@ -9,13 +9,13 @@ public class Usuario {
   private List<PropuestaGuardarropa> propuestasPendientes;
   private List<PropuestaGuardarropa> propuestasAceptadas;
   private List<Atuendo> sugerencias;
-  private NotificationServiceAPI servicioDeNotificacion;
+  private NotificationService servicioDeNotificacion;
   private MailSender mailSender;
   private String email;
 
   public Usuario(List<Guardarropa> guardarropas, List<PropuestaGuardarropa> propuestasPendientes,
                  List<PropuestaGuardarropa> propuestasAceptadas, List<Atuendo> sugerencias,
-                 NotificationServiceAPI servicioDeNotificacion, MailSender mailSender, String email) {
+                 NotificationService servicioDeNotificacion, MailSender mailSender, String email) {
     this.guardarropas = guardarropas;
     this.propuestasPendientes = propuestasPendientes;
     this.propuestasAceptadas = propuestasAceptadas;

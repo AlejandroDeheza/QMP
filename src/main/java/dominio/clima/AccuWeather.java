@@ -1,7 +1,6 @@
 package dominio.clima;
 
-import dominio.usuario.AsesorDeImagen;
-import dominio.usuario.ObserverClima;
+import dominio.usuario.InteresadoEnAlertas;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,11 +14,13 @@ public class AccuWeather implements ServicioMeteorologico {
   private AccuWeatherAPI apiClima;
   private RepositorioClima repositorioClima;
   private Long periodoDeActualizacion = 12L;
-  private List<ObserverClima> observersClima;
+  private List<InteresadoEnAlertas> interesadosEnAlertas;
 
-  public AccuWeather(AccuWeatherAPI apiClima, RepositorioClima repositorioClima) {
+  public AccuWeather(AccuWeatherAPI apiClima, RepositorioClima repositorioClima,
+                     List<InteresadoEnAlertas> interesadosEnAlertas) {
     this.apiClima = apiClima;
     this.repositorioClima = repositorioClima;
+    this.interesadosEnAlertas = interesadosEnAlertas;
   }
 
   @Override
@@ -29,12 +30,14 @@ public class AccuWeather implements ServicioMeteorologico {
   }
 
   @Override
-  public void actualizarAlertasMeteorologicas(String ciudad, AsesorDeImagen asesor) {
+  public void actualizarAlertasMeteorologicas(String ciudad) {
     Map<String, Object> alertas = apiClima.getAlertas(ciudad);
     List<String> alertasActuales = (List<String>) alertas.get("CurrentAlerts");
     //Devuelve un objeto como [“STORM”, “HAIL”, ...]
-    if (!alertasActuales.isEmpty()) this.observersClima.forEach(o -> o.actualizar(alertasActuales));
-    this.repositorioClima.setAlertasMeteorologicas(ciudad, alertasActuales);
+    if (!alertasActuales.isEmpty()) {
+      this.interesadosEnAlertas.forEach(interesado -> interesado.avisar(alertasActuales, ciudad));
+      this.repositorioClima.setAlertasMeteorologicas(ciudad, alertasActuales);
+    }
   } // los empleados disparan el proceso desde aca
 
   private void validarUltimaConsulta(String ciudad) {

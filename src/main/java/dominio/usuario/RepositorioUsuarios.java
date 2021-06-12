@@ -20,18 +20,12 @@ public class RepositorioUsuarios {
   }
 
   //SINGLETON <--------------------------------
-
-  private static RepositorioUsuarios INSTANCE;
-
+  private static RepositorioUsuarios INSTANCE = new RepositorioUsuarios();
   //usariamos el constructor solo para tests
   public RepositorioUsuarios() {
   }
-
   //usariamos el getInstance en el codigo
   public static RepositorioUsuarios getInstance() {
-    if (INSTANCE == null) {
-      INSTANCE = new RepositorioUsuarios();
-    }
     return INSTANCE;
   }
 

@@ -6,5 +6,5 @@ public interface ServicioMeteorologico {
 
   EstadoDelClima obtenerCondicionesClimaticas(String ciudad);
 
-  void actualizarAlertasMeteorologicas(String ciudad, AsesorDeImagen asesor);
+  void actualizarAlertasMeteorologicas(String ciudad);
 }

@@ -46,18 +46,12 @@ public class RepositorioClima {
 
 
   //SINGLETON <--------------------------------
-
-  private static RepositorioClima INSTANCE;
-
+  private static RepositorioClima INSTANCE = new RepositorioClima();
   //usariamos el constructor solo para tests
   public RepositorioClima() {
   }
-
   //usariamos el getInstance en el codigo
   public static RepositorioClima getInstance() {
-    if (INSTANCE == null) {
-      INSTANCE = new RepositorioClima();
-    }
     return INSTANCE;
   }
 }
