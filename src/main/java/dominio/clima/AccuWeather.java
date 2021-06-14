@@ -1,9 +1,10 @@
 package dominio.clima;
 
-import dominio.usuario.InteresadoEnAlertas;
+import dominio.usuario.RepositorioUsuarios;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +15,12 @@ public class AccuWeather implements ServicioMeteorologico {
   private AccuWeatherAPI apiClima;
   private RepositorioClima repositorioClima;
   private Long periodoDeActualizacion = 12L;
-  private List<InteresadoEnAlertas> interesadosEnAlertas;
+  private RepositorioUsuarios repoUsuarios;
 
-  public AccuWeather(AccuWeatherAPI apiClima, RepositorioClima repositorioClima,
-                     List<InteresadoEnAlertas> interesadosEnAlertas) {
+  public AccuWeather(AccuWeatherAPI apiClima, RepositorioClima repositorioClima, RepositorioUsuarios repoUsuarios) {
     this.apiClima = apiClima;
     this.repositorioClima = repositorioClima;
-    this.interesadosEnAlertas = interesadosEnAlertas;
+    this.repoUsuarios = repoUsuarios;
   }
 
   @Override
@@ -32,13 +32,19 @@ public class AccuWeather implements ServicioMeteorologico {
   @Override
   public void actualizarAlertasMeteorologicas(String ciudad) {
     Map<String, Object> alertas = apiClima.getAlertas(ciudad);
-    List<String> alertasActuales = (List<String>) alertas.get("CurrentAlerts");
-    //Devuelve un objeto como [“STORM”, “HAIL”, ...]
-    if (!alertasActuales.isEmpty()) {
-      this.interesadosEnAlertas.forEach(interesado -> interesado.avisar(alertasActuales, ciudad));
-      this.repositorioClima.setAlertasMeteorologicas(ciudad, alertasActuales);
+    List<AlertaMeteorologica> alertasAdaptadas = adaptarAlertas( (List<String>) alertas.get("CurrentAlerts") );
+    if (!alertasAdaptadas.isEmpty()) {
+      repoUsuarios.getUsuarios().forEach(usuario -> usuario.realizarAccionesSobreAlertas(alertasAdaptadas, ciudad));
+      repositorioClima.setAlertasMeteorologicas(ciudad, alertasAdaptadas);
     }
   } // los empleados disparan el proceso desde aca
+
+  private List<AlertaMeteorologica> adaptarAlertas(List<String> alertasActuales) {
+    List<AlertaMeteorologica> alertasAdaptadas = new ArrayList<>();
+    if (alertasActuales.contains("STORM")) alertasAdaptadas.add(AlertaMeteorologica.TORMENTA);
+    if (alertasActuales.contains("HAIL")) alertasAdaptadas.add(AlertaMeteorologica.GRANIZO);
+    return alertasAdaptadas;
+  }
 
   private void validarUltimaConsulta(String ciudad) {
     if (repositorioClima.climaEstaDesactualizado(ciudad, periodoDeActualizacion)) {

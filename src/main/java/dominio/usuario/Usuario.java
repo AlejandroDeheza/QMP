@@ -1,32 +1,28 @@
 package dominio.usuario;
 
+import dominio.clima.AlertaMeteorologica;
+import dominio.interesadoEnAlertas.AccionAnteAlertaMeteorologica;
 import dominio.ropa.Atuendo;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Usuario {
   private List<Guardarropa> guardarropas;
-  private List<PropuestaGuardarropa> propuestasPendientes;
-  private List<PropuestaGuardarropa> propuestasAceptadas;
-  private List<Atuendo> sugerencias;
-  private NotificationService servicioDeNotificacion;
-  private MailSender mailSender;
+  private List<PropuestaGuardarropa> propuestasPendientes = new ArrayList<>();
+  private List<PropuestaGuardarropa> propuestasAceptadas = new ArrayList<>();
+  private AsesorDeImagen asesor;
+  private String ciudad;
+  private Atuendo sugerenciaDiaria;
+  private List<AccionAnteAlertaMeteorologica> accionesSobreAlertas = new ArrayList<>();
   private String email;
 
-  public Usuario(List<Guardarropa> guardarropas, List<PropuestaGuardarropa> propuestasPendientes,
-                 List<PropuestaGuardarropa> propuestasAceptadas, List<Atuendo> sugerencias,
-                 NotificationService servicioDeNotificacion, MailSender mailSender, String email) {
+  public Usuario(List<Guardarropa> guardarropas, AsesorDeImagen asesor, String ciudad, String email) {
     this.guardarropas = guardarropas;
-    this.propuestasPendientes = propuestasPendientes;
-    this.propuestasAceptadas = propuestasAceptadas;
-    this.sugerencias = sugerencias;
-    this.servicioDeNotificacion = servicioDeNotificacion;
-    this.mailSender = mailSender;
+    this.asesor = asesor;
+    this.ciudad = ciudad;
     this.email = email;
-  }
-
-  public void agregarSugerencia(Atuendo sugerencia) {
-    sugerencias.add(sugerencia);  // de qmp anteriores
   }
 
   public void agregarGuardarropa(Guardarropa guardarropa) {
@@ -58,19 +54,27 @@ public class Usuario {
     this.propuestasPendientes.add(propuesta);
   }
 
-  public void notificar(String text) {
-    this.servicioDeNotificacion.notify(text);
+  public void calcularSugerenciaDiaria() {
+    Random aleatorio = new Random();
+    this.sugerenciaDiaria = asesor.sugerirAtuendo( ciudad, guardarropas.get(aleatorio.nextInt(guardarropas.size())) );
   }
 
-  public void enviarMail(String texto) {
-    this.mailSender.send(this.email, texto);
+  public void suscribirAccionSobreAlertas(AccionAnteAlertaMeteorologica accion) {
+    this.accionesSobreAlertas.add(accion);
   }
+
+  public void desuscribirAccionSobreAlertas(AccionAnteAlertaMeteorologica accion) {
+    this.accionesSobreAlertas.remove(accion);
+  }
+
+  public void realizarAccionesSobreAlertas(List<AlertaMeteorologica> alertas, String ciudad) {
+    if (this.ciudad.equals(ciudad)) this.accionesSobreAlertas.forEach(
+        accion -> accion.anteNuevasAlertasMeteorologicas(alertas, this)
+    );
+  }
+
 
   // GETTERS
-
-  public List<Guardarropa> getGuardarropas() {
-    return this.guardarropas;
-  }
 
   public List<PropuestaGuardarropa> getPropuestasPendientes() {
     return propuestasPendientes;
@@ -78,6 +82,14 @@ public class Usuario {
 
   public List<PropuestaGuardarropa> getPropuestasAceptadas() {
     return propuestasAceptadas;
+  }
+
+  public Atuendo getSugerenciaDiaria() {
+    return sugerenciaDiaria;
+  }
+
+  public String getEmail() {
+    return email;
   }
 
 }

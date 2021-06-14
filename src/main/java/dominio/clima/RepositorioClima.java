@@ -11,17 +11,17 @@ import static java.time.temporal.ChronoUnit.HOURS;
 public class RepositorioClima {
 
   private final Map<String, Object> condicionesClimaticas = new HashMap<>();
-  private final Map<String, List<String>> alertasMeteorologicas = new HashMap<>();
+  private final Map<String, List<AlertaMeteorologica>> alertasMeteorologicas = new HashMap<>();
 
   public EstadoDelClima getCondicionClimatica(String ciudad) {
     return ((List<EstadoDelClima>) condicionesClimaticas.get(ciudad)).get(horarioAUtilizar(ciudad));
   }
 
-  public List<String> getAlertasMeteorologicas(String ciudad) {
-    return (List<String>) alertasMeteorologicas.get(ciudad);
-  } // los usuarios consultan de aca
+  public List<AlertaMeteorologica> getAlertasMeteorologicas(String ciudad) {
+    return (List<AlertaMeteorologica>) alertasMeteorologicas.get(ciudad);
+  } // los usuarios pueden consultar de aca
 
-  public void setAlertasMeteorologicas(String ciudad, List<String> alertas) {
+  public void setAlertasMeteorologicas(String ciudad, List<AlertaMeteorologica> alertas) {
     this.alertasMeteorologicas.put(ciudad, alertas);
   }
 

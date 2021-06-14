@@ -1,23 +1,25 @@
 package dominio.usuario;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class RepositorioUsuarios {
 
-  private List<Usuario> usuarios;
+  private List<Usuario> usuarios = new ArrayList<>();
 
-  public void calcularSugerenciasDiarias(String ciudad, AsesorDeImagen asesor) {
-    Random aleatorio = new Random();
-    usuarios.forEach(
-      usuario -> usuario.agregarSugerencia(
-          asesor.sugerirAtuendo(
-              ciudad,
-              usuario.getGuardarropas().get(aleatorio.nextInt(usuario.getGuardarropas().size()))
-          )
-      )
-    );
+  public void calcularSugerenciasDiarias() {
+    usuarios.forEach(Usuario::calcularSugerenciaDiaria);
   }
+
+  public void agregarUsuario(Usuario usuario) {
+    usuarios.add(usuario);
+  }
+
+  public List<Usuario> getUsuarios() {
+    return usuarios;
+  }
+
+
 
   //SINGLETON <--------------------------------
   private static RepositorioUsuarios INSTANCE = new RepositorioUsuarios();

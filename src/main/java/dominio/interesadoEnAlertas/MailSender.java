@@ -1,4 +1,4 @@
-package dominio.usuario;
+package dominio.interesadoEnAlertas;
 
 public class MailSender {
 
