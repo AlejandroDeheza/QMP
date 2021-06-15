@@ -3,7 +3,7 @@
 ## Diagrama de clases - REQUERIMIENTOS DE ESTA ITERACION
 
 <p align="center"> 
-<img src="diagramas/qmp6-R.png">
+<img src="diagramas/qmp6-r.png">
 </p>
 
 ## Diagrama de clases - SOLUCION COMPLETA

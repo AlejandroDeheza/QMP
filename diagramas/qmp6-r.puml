@@ -9,51 +9,13 @@ class dominio.interesadoEnAlertas.NotificationService {
 class dominio.usuario.Usuario {
 - String ciudad
 - String email
-+ void aceptarPropuesta(PropuestaGuardarropa)
-+ void deshacerPropuesta(PropuestaGuardarropa)
 + void calcularSugerenciaDiaria()
 + void suscribirAccionSobreAlertas(AccionAnteAlertaMeteorologica)
 + void desuscribirAccionSobreAlertas(AccionAnteAlertaMeteorologica)
 + void realizarAccionesSobreAlertas(List<AlertaMeteorologica>,String)
 }
-class dominio.ropa.BorradorDePrendas {
-- TipoPrenda tipoPrenda
-- TipoMaterial tipoMaterial
-- Trama trama
-- Color colorPrincipal
-- Color colorSecundario
-- BigDecimal temperaturaMaximaDeUso
-+ BorradorDePrendas setTipoMaterial(TipoMaterial)
-+ BorradorDePrendas setTrama(Trama)
-+ BorradorDePrendas setColorPrincipal(Color)
-+ BorradorDePrendas setColorSecundario(Color)
-+ BorradorDePrendas settemperaturaMaximaDeUso(BigDecimal)
-+ CategoriaPrenda identificarCategoria()
-+ Prenda generarPrenda()
-}
-class dominio.usuario.Guardarropa {
-- String criterioGuardarropa
-+ List<Atuendo> generarSugerencias()
-}
-class dominio.usuario.AgregarPrenda {
-+ void aplicar()
-+ void deshacer()
-}
-class dominio.clima.EstadoDelClima {
-~ BigDecimal temperatura
-~ BigDecimal humedad
-}
 class dominio.interesadoEnAlertas.MailSender {
 + void send(String email,String texto)
-}
-class dominio.ropa.Prenda {
-- TipoPrenda tipo
-- TipoMaterial tipoMaterial
-- Trama trama
-- Color colorPrincipal
-- Color colorSecundario
-- BigDecimal temperaturaMaximaDeUso
-+ Boolean esAdecuadaPara(BigDecimal)
 }
 class dominio.clima.AccuWeatherAPI {
 + List<Map<String,Object>> getWeather(String)
@@ -64,9 +26,6 @@ interface dominio.interesadoEnAlertas.Correo {
 }
 class dominio.interesadoEnAlertas.ActualizadorSugerenciasAnteAlerta {
 + void anteNuevasAlertasMeteorologicas(List<AlertaMeteorologica>,Usuario)
-}
-class dominio.usuario.AsesorDeImagen {
-+ Atuendo sugerirAtuendo(String,Guardarropa)
 }
 interface dominio.interesadoEnAlertas.Notificador {
 ~ void mostrarNotificacion(String)
@@ -87,18 +46,10 @@ class dominio.clima.AccuWeather {
 + EstadoDelClima obtenerCondicionesClimaticas(String)
 + void actualizarAlertasMeteorologicas(String)
 }
-class dominio.usuario.QuitarPrenda {
-+ void aplicar()
-+ void deshacer()
-}
 class dominio.clima.RepositorioClima {
-- Map<String,Object> condicionesClimaticas
 - Map<String,List<AlertaMeteorologica>> alertasMeteorologicas
-+ EstadoDelClima getCondicionClimatica(String)
 + List<AlertaMeteorologica> getAlertasMeteorologicas(String)
 + void setAlertasMeteorologicas(String,List<AlertaMeteorologica>)
-+ void setCondicionesClimaticas(String,LocalDateTime,List<EstadoDelClima>)
-+ Boolean climaEstaDesactualizado(String,Long)
 }
 interface dominio.clima.ServicioMeteorologico {
 ~ EstadoDelClima obtenerCondicionesClimaticas(String)
@@ -106,10 +57,6 @@ interface dominio.clima.ServicioMeteorologico {
 }
 interface dominio.interesadoEnAlertas.AccionAnteAlertaMeteorologica {
 ~ void anteNuevasAlertasMeteorologicas(List<AlertaMeteorologica>,Usuario)
-}
-interface dominio.usuario.PropuestaGuardarropa {
-~ void aplicar()
-~ void deshacer()
 }
 class dominio.ropa.Atuendo {
 - Prenda prendaSuperior
@@ -126,36 +73,17 @@ class dominio.interesadoEnAlertas.NotificationServiceAdapter {
 + void mostrarNotificacion(String mensaje)
 }
 
-dominio.ropa.Prenda <.up. dominio.ropa.BorradorDePrendas
-dominio.ropa.Atuendo <.down. dominio.usuario.Guardarropa
-dominio.clima.EstadoDelClima <.. dominio.clima.RepositorioClima
-dominio.clima.AlertaMeteorologica <.. dominio.clima.RepositorioClima
+dominio.clima.AlertaMeteorologica <.right. dominio.clima.RepositorioClima
 
-dominio.usuario.PropuestaGuardarropa <|.. dominio.usuario.AgregarPrenda
 dominio.interesadoEnAlertas.AccionAnteAlertaMeteorologica <|.. dominio.interesadoEnAlertas.ActualizadorSugerenciasAnteAlerta
 dominio.interesadoEnAlertas.AccionAnteAlertaMeteorologica <|.. dominio.interesadoEnAlertas.NotificadorAnteAlertas
 dominio.interesadoEnAlertas.AccionAnteAlertaMeteorologica <|.. dominio.interesadoEnAlertas.EmisorDeCorreoAnteAlertas
-dominio.clima.ServicioMeteorologico <|.up. dominio.clima.AccuWeather
-dominio.usuario.PropuestaGuardarropa <|.. dominio.usuario.QuitarPrenda
+dominio.clima.ServicioMeteorologico <|.down. dominio.clima.AccuWeather
 dominio.interesadoEnAlertas.Correo <|.. dominio.interesadoEnAlertas.MailSenderAdapter
 dominio.interesadoEnAlertas.Notificador <|.. dominio.interesadoEnAlertas.NotificationServiceAdapter
 
-dominio.usuario.Guardarropa "*" <-- dominio.usuario.Usuario: guardarropas
-dominio.usuario.PropuestaGuardarropa "*" <-right- dominio.usuario.Usuario: propuestasPendientes
-dominio.usuario.PropuestaGuardarropa "*" <-- dominio.usuario.Usuario: propuestasAceptadas
-dominio.usuario.AsesorDeImagen <-left- dominio.usuario.Usuario: asesor
-dominio.ropa.Atuendo <-- dominio.usuario.Usuario: sugerenciaDiaria
+dominio.ropa.Atuendo <-left- dominio.usuario.Usuario: sugerenciaDiaria
 dominio.interesadoEnAlertas.AccionAnteAlertaMeteorologica "*" <-up- dominio.usuario.Usuario: accionesSobreAlertas
-
-dominio.ropa.Prenda "*" <-right- dominio.usuario.Guardarropa: prendasSuperiores
-dominio.ropa.Prenda "*" <-right- dominio.usuario.Guardarropa: prendasInferiores
-dominio.ropa.Prenda "*" <-right- dominio.usuario.Guardarropa: calzados
-dominio.ropa.Prenda "*" <-right- dominio.usuario.Guardarropa: accesorios
-
-dominio.usuario.Guardarropa <-- dominio.usuario.PropuestaGuardarropa: guardarropa
-dominio.ropa.Prenda <-- dominio.usuario.PropuestaGuardarropa: prenda
-
-dominio.clima.ServicioMeteorologico <-down- dominio.usuario.AsesorDeImagen: servicioMeteorologico
 
 dominio.interesadoEnAlertas.Notificador <-up- dominio.interesadoEnAlertas.NotificadorAnteAlertas: notificador
 
@@ -163,12 +91,13 @@ dominio.usuario.Usuario "*" <-up- dominio.usuario.RepositorioUsuarios: usuarios
 
 dominio.interesadoEnAlertas.Correo <-up- dominio.interesadoEnAlertas.EmisorDeCorreoAnteAlertas: correo
 
-dominio.clima.AccuWeatherAPI <-up- dominio.clima.AccuWeather: apiClima
+dominio.clima.AccuWeatherAPI <-right- dominio.clima.AccuWeather: apiClima
 
 dominio.clima.RepositorioClima <-down- dominio.clima.ServicioMeteorologico: repositorioClima
-dominio.usuario.RepositorioUsuarios <-up- dominio.clima.ServicioMeteorologico: repoUsuarios
+dominio.usuario.RepositorioUsuarios <-left- dominio.clima.ServicioMeteorologico: repoUsuarios
 
 dominio.interesadoEnAlertas.MailSender <-left- dominio.interesadoEnAlertas.MailSenderAdapter: mailSender
 dominio.interesadoEnAlertas.NotificationService <-left- dominio.interesadoEnAlertas.NotificationServiceAdapter: notificationService
+
 
 @enduml
