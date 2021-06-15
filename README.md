@@ -1,5 +1,7 @@
 # QMP-Sexta-Iteracion
 
+## [Link](https://github.com/AlejandroDeheza/QMP/tree/qmp6-refactorizado) de resolucion refactorizada segun lo visto en clase
+
 ## Diagrama de clases - REQUERIMIENTOS DE ESTA ITERACION
 
 <p align="center"> 
