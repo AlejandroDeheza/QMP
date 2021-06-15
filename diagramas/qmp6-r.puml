@@ -1,0 +1,103 @@
+@startuml
+
+enum dominio.clima.AlertaMeteorologica {
+  TORMENTA, GRANIZO
+}
+class dominio.interesadoEnAlertas.NotificationService {
++ void notify(String mensaje)
+}
+class dominio.usuario.Usuario {
+- String ciudad
+- String email
++ void calcularSugerenciaDiaria()
++ void suscribirAccionSobreAlertas(AccionAnteAlertaMeteorologica)
++ void desuscribirAccionSobreAlertas(AccionAnteAlertaMeteorologica)
++ void realizarAccionesSobreAlertas(List<AlertaMeteorologica>,String)
+}
+class dominio.interesadoEnAlertas.MailSender {
++ void send(String email,String texto)
+}
+class dominio.clima.AccuWeatherAPI {
++ List<Map<String,Object>> getWeather(String)
++ Map<String,Object> getAlertas(String)
+}
+interface dominio.interesadoEnAlertas.Correo {
+~ void enviarCorreo(String,String)
+}
+class dominio.interesadoEnAlertas.ActualizadorSugerenciasAnteAlerta {
++ void anteNuevasAlertasMeteorologicas(List<AlertaMeteorologica>,Usuario)
+}
+interface dominio.interesadoEnAlertas.Notificador {
+~ void mostrarNotificacion(String)
+}
+class dominio.interesadoEnAlertas.NotificadorAnteAlertas {
+- Map<AlertaMeteorologica,String> mensaje
++ void anteNuevasAlertasMeteorologicas(List<AlertaMeteorologica>,Usuario)
+}
+class dominio.usuario.RepositorioUsuarios {
++ void calcularSugerenciasDiarias()
+}
+class dominio.interesadoEnAlertas.EmisorDeCorreoAnteAlertas {
+- String texto
++ void anteNuevasAlertasMeteorologicas(List<AlertaMeteorologica>,Usuario)
+}
+class dominio.clima.AccuWeather {
+- Long periodoDeActualizacion
++ EstadoDelClima obtenerCondicionesClimaticas(String)
++ void actualizarAlertasMeteorologicas(String)
+}
+class dominio.clima.RepositorioClima {
+- Map<String,List<AlertaMeteorologica>> alertasMeteorologicas
++ List<AlertaMeteorologica> getAlertasMeteorologicas(String)
++ void setAlertasMeteorologicas(String,List<AlertaMeteorologica>)
+}
+interface dominio.clima.ServicioMeteorologico {
+~ EstadoDelClima obtenerCondicionesClimaticas(String)
+~ void actualizarAlertasMeteorologicas(String)
+}
+interface dominio.interesadoEnAlertas.AccionAnteAlertaMeteorologica {
+~ void anteNuevasAlertasMeteorologicas(List<AlertaMeteorologica>,Usuario)
+}
+class dominio.ropa.Atuendo {
+- Prenda prendaSuperior
+- Prenda prendaInferior
+- Prenda calzado
+- Prenda accesorio
++ Boolean esAdecuadoPara(BigDecimal)
+}
+
+class dominio.interesadoEnAlertas.MailSenderAdapter {
++ void enviarCorreo(String email, String cuerpo)
+}
+class dominio.interesadoEnAlertas.NotificationServiceAdapter {
++ void mostrarNotificacion(String mensaje)
+}
+
+dominio.clima.AlertaMeteorologica <.right. dominio.clima.RepositorioClima
+
+dominio.interesadoEnAlertas.AccionAnteAlertaMeteorologica <|.. dominio.interesadoEnAlertas.ActualizadorSugerenciasAnteAlerta
+dominio.interesadoEnAlertas.AccionAnteAlertaMeteorologica <|.. dominio.interesadoEnAlertas.NotificadorAnteAlertas
+dominio.interesadoEnAlertas.AccionAnteAlertaMeteorologica <|.. dominio.interesadoEnAlertas.EmisorDeCorreoAnteAlertas
+dominio.clima.ServicioMeteorologico <|.down. dominio.clima.AccuWeather
+dominio.interesadoEnAlertas.Correo <|.. dominio.interesadoEnAlertas.MailSenderAdapter
+dominio.interesadoEnAlertas.Notificador <|.. dominio.interesadoEnAlertas.NotificationServiceAdapter
+
+dominio.ropa.Atuendo <-left- dominio.usuario.Usuario: sugerenciaDiaria
+dominio.interesadoEnAlertas.AccionAnteAlertaMeteorologica "*" <-up- dominio.usuario.Usuario: accionesSobreAlertas
+
+dominio.interesadoEnAlertas.Notificador <-up- dominio.interesadoEnAlertas.NotificadorAnteAlertas: notificador
+
+dominio.usuario.Usuario "*" <-up- dominio.usuario.RepositorioUsuarios: usuarios
+
+dominio.interesadoEnAlertas.Correo <-up- dominio.interesadoEnAlertas.EmisorDeCorreoAnteAlertas: correo
+
+dominio.clima.AccuWeatherAPI <-right- dominio.clima.AccuWeather: apiClima
+
+dominio.clima.RepositorioClima <-down- dominio.clima.ServicioMeteorologico: repositorioClima
+dominio.usuario.RepositorioUsuarios <-left- dominio.clima.ServicioMeteorologico: repoUsuarios
+
+dominio.interesadoEnAlertas.MailSender <-left- dominio.interesadoEnAlertas.MailSenderAdapter: mailSender
+dominio.interesadoEnAlertas.NotificationService <-left- dominio.interesadoEnAlertas.NotificationServiceAdapter: notificationService
+
+
+@enduml

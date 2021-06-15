@@ -1,7 +1,10 @@
 package dominio.clima;
 
+import dominio.usuario.RepositorioUsuarios;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,16 +15,35 @@ public class AccuWeather implements ServicioMeteorologico {
   private AccuWeatherAPI apiClima;
   private RepositorioClima repositorioClima;
   private Long periodoDeActualizacion = 12L;
+  private RepositorioUsuarios repoUsuarios;
 
-  public AccuWeather(AccuWeatherAPI apiClima, RepositorioClima repositorioClima) {
+  public AccuWeather(AccuWeatherAPI apiClima, RepositorioClima repositorioClima, RepositorioUsuarios repoUsuarios) {
     this.apiClima = apiClima;
     this.repositorioClima = repositorioClima;
+    this.repoUsuarios = repoUsuarios;
   }
 
   @Override
   public EstadoDelClima obtenerCondicionesClimaticas(String ciudad) {
     validarUltimaConsulta(ciudad);
     return repositorioClima.getCondicionClimatica(ciudad);
+  }
+
+  @Override
+  public void actualizarAlertasMeteorologicas(String ciudad) {
+    Map<String, Object> alertas = apiClima.getAlertas(ciudad);
+    List<AlertaMeteorologica> alertasAdaptadas = adaptarAlertas( (List<String>) alertas.get("CurrentAlerts") );
+    if (!alertasAdaptadas.isEmpty()) {
+      repoUsuarios.getUsuarios().forEach(usuario -> usuario.realizarAccionesSobreAlertas(alertasAdaptadas, ciudad));
+      repositorioClima.setAlertasMeteorologicas(ciudad, alertasAdaptadas);
+    }
+  } // los empleados disparan el proceso desde aca
+
+  private List<AlertaMeteorologica> adaptarAlertas(List<String> alertasActuales) {
+    List<AlertaMeteorologica> alertasAdaptadas = new ArrayList<>();
+    if (alertasActuales.contains("STORM")) alertasAdaptadas.add(AlertaMeteorologica.TORMENTA);
+    if (alertasActuales.contains("HAIL")) alertasAdaptadas.add(AlertaMeteorologica.GRANIZO);
+    return alertasAdaptadas;
   }
 
   private void validarUltimaConsulta(String ciudad) {

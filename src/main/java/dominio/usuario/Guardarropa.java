@@ -31,7 +31,10 @@ public class Guardarropa {
     if (prenda.getCategoria() == CategoriaPrenda.PARTE_INFERIOR) prendasInferiores.add(prenda);
     if (prenda.getCategoria() == CategoriaPrenda.CALZADO) calzados.add(prenda);
     if (prenda.getCategoria() == CategoriaPrenda.ACCESORIO) accesorios.add(prenda);
-  }
+  } // consultar y justificar, esto es valido?
+  // segun lo que entendi de la clase 8, esto es valido porque aplicar polimorfismo sobre la "CategoriaPrenda"
+  // para que se agregue a la lista correcta del guardarropas no tendria sentido,
+  // la logica para eso la tiene que conocer el "Guardarropa", no la "CategoriaPrenda"
 
   public void quitarPrenda(Prenda prenda) {
     if (prenda.getCategoria() == CategoriaPrenda.PARTE_SUPERIOR) prendasSuperiores.remove(prenda);
