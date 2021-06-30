@@ -67,8 +67,10 @@ public class AccuWeather implements ServicioMeteorologico {
 
   private EstadoDelClima generarEstadoDelClima(Map<String, Object> clima) {
     return new EstadoDelClima(
-        (BigDecimal) clima.get("PrecipitationProbability"),
-        pasarACelcius((BigDecimal) ((HashMap<String, Object>) clima.get("Temperature")).get("Value"))
+        BigDecimal.valueOf((int) clima.get("PrecipitationProbability")) ,
+        pasarACelcius(( BigDecimal.valueOf(
+            (int) ((HashMap<String, Object>) clima.get("Temperature")).get("Value")
+        )))
         );
   }
 

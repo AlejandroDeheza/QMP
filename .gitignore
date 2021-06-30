@@ -24,6 +24,8 @@ hs_err_pid*
 
 # maven build
 target/**
+*.ipr
+*.iws
 
 # IJ files
 *.iml
