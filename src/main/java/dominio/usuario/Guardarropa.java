@@ -17,7 +17,7 @@ public class Guardarropa {
   private Set<Prenda> calzados;
   private Set<Prenda> accesorios;
 
-  Guardarropa(String criterioGuardarropa, Set<Prenda> prendasSuperiores, Set<Prenda> prendasInferiores,
+  public Guardarropa(String criterioGuardarropa, Set<Prenda> prendasSuperiores, Set<Prenda> prendasInferiores,
               Set<Prenda> calzados, Set<Prenda> accesorios) {
     this.criterioGuardarropa = criterioGuardarropa;
     this.prendasSuperiores = prendasSuperiores;
